@@ -2,6 +2,13 @@
    PREVIMED — Navigator (User Map View) Styles
    ================================================================ */
 
+/* ── Cloud float animation (rain icons) ─────────────────────── */
+@keyframes cloud-float {
+  0%, 100% { transform: translateY(0px) scale(1);   }
+  33%       { transform: translateY(-6px) scale(1.04); }
+  66%       { transform: translateY(-2px) scale(0.97); }
+}
+
 /* ── Full-screen layout ──────────────────────────────────────── */
 .navigator-page {
   position: fixed;
@@ -476,11 +483,118 @@
 
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 640px) {
-  .nav-topbar { flex-wrap: wrap; padding: 10px 12px; gap: 8px; }
-  .nav-logo-pill span { display: none; }
-  .nav-map-wrap { margin-top: 160px; }
-  .nav-strip-stats { gap: 12px; }
-  .nav-stat-value { font-size: 15px; }
-  .nav-layers-panel { bottom: 200px; }
-  .nav-route-strip { padding: 12px 14px; }
+  .nav-topbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .nav-logo-pill {
+    align-self: flex-start;
+    padding: 4px 8px;
+  }
+
+  .nav-logo-pill span {
+    display: none; /* Hide label */
+  }
+
+  .nav-user-menu {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+
+  .nav-inputs {
+    width: 100%;
+  }
+
+  .nav-route-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .nav-map-wrap {
+    margin-top: 165px;
+  }
+
+  /* Adjust the bottom panels so they don't overlap or look cramped */
+  .nav-layers-panel {
+    bottom: 235px; /* Push up above the route strip */
+    left: 10px;
+    right: 10px;
+    min-width: 0;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+  }
+
+  .nav-layers-title {
+    display: none; /* Hide title to save space on mobile */
+  }
+
+  .nav-layer-toggle {
+    margin-bottom: 0;
+  }
+
+  .nav-route-strip {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .nav-strip-header {
+    margin-bottom: 8px;
+  }
+
+  .nav-strip-title {
+    font-size: 13px;
+  }
+
+  .nav-score-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+  }
+
+  .nav-strip-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .nav-stat-item {
+    align-items: center;
+  }
+
+  .nav-stat-label {
+    font-size: 8px;
+  }
+
+  .nav-stat-value {
+    font-size: 13px;
+  }
+
+  .nav-hazards {
+    margin-top: 8px;
+    gap: 4px;
+  }
+
+  .nav-hazard-chip {
+    padding: 2px 6px;
+    font-size: 9px;
+  }
+
+  .nav-alt-routes {
+    margin-top: 8px;
+    gap: 4px;
+  }
+
+  .nav-alt-btn {
+    padding: 4px 6px;
+    font-size: 9px;
+  }
 }

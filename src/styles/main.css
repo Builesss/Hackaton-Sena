@@ -686,6 +686,7 @@ body {
   .main-content { margin-left: 0; }
   .header { left: 0; }
   .grid-1-2, .grid-2-1 { grid-template-columns: 1fr; }
+  .menu-btn { display: block !important; }
 }
 
 @media (max-width: 640px) {
@@ -695,6 +696,10 @@ body {
   .header-title { font-size: 15px; }
   .stat-value { font-size: 22px; }
   .map-container { height: 300px; }
+  .live-indicator { display: none !important; }
+  .header-clock { display: none !important; }
+  .header-user-info-text { display: none !important; }
+  .header-user-badge { border-left: none !important; padding-left: 0 !important; }
 }
 
 /* ── Mobile menu overlay ────────────────────────── */

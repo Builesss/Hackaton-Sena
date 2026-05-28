@@ -132,7 +132,7 @@ const Accidentalidad = () => {
               <div className="card-title">🗺️ Mapa de Incidentes Viales</div>
               <div className="card-subtitle">Heatmap geoespacial de accidentalidad — Medellín</div>
             </div>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {['all', 'fatal', 'grave', 'leve'].map((f) => (
                 <button
                   key={f}
@@ -156,6 +156,15 @@ const Accidentalidad = () => {
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   attribution="© OpenStreetMap | Movilidata OS"
                 />
+                {/* TomTom live traffic for context */}
+                {import.meta.env.VITE_TOMTOM_API_KEY && (
+                  <TileLayer
+                    url={`/tomtom/traffic/map/4/tile/flow/relative/{z}/{x}/{y}.png?key=${import.meta.env.VITE_TOMTOM_API_KEY}&thickness=3`}
+                    opacity={0.5}
+                    maxZoom={22}
+                    tileSize={256}
+                  />
+                )}
                 <LayerGroup>
                   {filtered.map((incident) => (
                     <CircleMarker

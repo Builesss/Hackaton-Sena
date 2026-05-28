@@ -9,7 +9,7 @@ import { useAuth } from '../../context/AuthContext';
 import { signOut } from '../../services/auth';
 import { getTrafficData, getAccidentsData, getWeatherData } from '../../services/api';
 import { computeRoutes, reverseGeocode, geocodeAddress } from '../../services/routing';
-import { getCongestionLevel, getRiskLevel } from '../../utils/helpers';
+import { getCongestionLevel, getRiskLevel, getMarkerColor } from '../../utils/helpers';
 import '../../styles/navigator.css';
 import 'leaflet/dist/leaflet.css';
 
@@ -40,6 +40,32 @@ const makeIcon = (color, label) => L.divIcon({
 
 const originIcon = makeIcon('#0066FF', '📍');
 const destIcon   = makeIcon('#00DCB4', '🎯');
+
+// ─── Cloud icon factory for rain zones ─────────────────────────
+const makeCloudIcon = (nivel, activo) => {
+  const color = nivel === 'crítico' ? '#FF4757' : nivel === 'alto' ? '#FF9500' : '#64B5F6';
+  const glow  = activo ? `drop-shadow(0 0 8px ${color})` : 'none';
+  const anim  = activo ? 'cloud-float 3s ease-in-out infinite' : 'none';
+  return L.divIcon({
+    className: '',
+    html: `<div style="animation:${anim};filter:${glow};">
+      <svg width="64" height="44" viewBox="0 0 64 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="32" cy="28" rx="26" ry="16" fill="${color}" opacity="0.85"/>
+        <ellipse cx="22" cy="24" rx="14" ry="12" fill="${color}" opacity="0.9"/>
+        <ellipse cx="40" cy="25" rx="12" ry="10" fill="${color}" opacity="0.9"/>
+        <ellipse cx="32" cy="20" rx="16" ry="13" fill="${color}"/>
+        ${activo ? `
+        <line x1="22" y1="38" x2="19" y2="46" stroke="${color}" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+        <line x1="30" y1="40" x2="27" y2="50" stroke="${color}" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+        <line x1="38" y1="38" x2="35" y2="48" stroke="${color}" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+        ` : ''}
+      </svg>
+    </div>`,
+    iconSize:    [64, 56],
+    iconAnchor:  [32, 44],
+    popupAnchor: [0, -48],
+  });
+};
 
 // ─── Map click handler component ───────────────────────────────
 const MapClickHandler = ({ selectMode, onMapClick }) => {
@@ -337,75 +363,66 @@ const Navigator = () => {
             attribution="© OpenStreetMap | PREVIMED"
           />
 
+          {/* ── TomTom Real-Time Traffic Layer (draws ON actual roads) ── */}
+          {showTraffic && import.meta.env.VITE_TOMTOM_API_KEY && (
+            <TileLayer
+              url={`/tomtom/traffic/map/4/tile/flow/relative/{z}/{x}/{y}.png?key=${import.meta.env.VITE_TOMTOM_API_KEY}&thickness=3`}
+              opacity={0.8}
+              maxZoom={22}
+              tileSize={256}
+              attribution="© TomTom"
+            />
+          )}
+
           <MapClickHandler selectMode={selectMode} onMapClick={handleMapClick} />
           {flyTarget && <FlyTo point={flyTarget} />}
 
-          {/* ── Traffic circles ── */}
-          {showTraffic && trafficData?.zonas?.map((z) => {
-            const lvl = getCongestionLevel(z.congestion);
-            return (
-              <CircleMarker
-                key={`t-${z.id}`}
-                center={[z.lat, z.lng]}
-                radius={10 + z.congestion / 12}
-                fillColor={lvl.color}
-                color={lvl.color}
-                weight={1.5}
-                opacity={0.85}
-                fillOpacity={0.4}
-              >
-                <Popup>
-                  <strong>{z.nombre}</strong><br />
-                  🚦 Congestión: <strong style={{ color: lvl.color }}>{z.congestion}%</strong><br />
-                  🚗 {z.velocidad} km/h · {z.flujo} veh/h
-                </Popup>
-              </CircleMarker>
-            );
-          })}
 
-          {/* ── Accident zones ── */}
-          {showAccidents && accidentsData?.zonasCriticas?.map((z) => {
-            const risk = getRiskLevel(z.riesgo);
-            return (
-              <CircleMarker
-                key={`a-${z.zona}`}
-                center={[z.lat, z.lng]}
-                radius={8 + z.riesgo / 14}
-                fillColor={risk.color}
-                color={risk.color}
-                weight={1.5}
-                opacity={0.8}
-                fillOpacity={0.35}
-                dashArray="4 3"
-              >
-                <Popup>
-                  <strong>⚠️ {z.zona}</strong><br />
-                  Riesgo: <strong style={{ color: risk.color }}>{z.riesgo}%</strong><br />
-                  {z.accidentes_2024} accidentes en 2024
-                </Popup>
-              </CircleMarker>
-            );
-          })}
-
-          {/* ── Rain / flood zones ── */}
-          {showRain && weatherData?.zonasRiesgo?.filter(z => z.activo).map((z, i) => (
+          {/* ── Accident Incidents ── */}
+          {showAccidents && accidentsData?.incidents?.map((incident) => (
             <CircleMarker
-              key={`r-${i}`}
-              center={[z.lat, z.lng]}
-              radius={16}
-              fillColor="#0066FF"
-              color="#0066FF"
-              weight={1.5}
-              opacity={0.7}
-              fillOpacity={0.2}
-              dashArray="6 4"
+              key={`inc-${incident.id}`}
+              center={[incident.lat, incident.lng]}
+              radius={incident.gravedad === 'fatal' ? 14 : incident.gravedad === 'grave' ? 10 : 7}
+              fillColor={getMarkerColor(incident.gravedad)}
+              color={getMarkerColor(incident.gravedad)}
+              weight={2}
+              opacity={0.9}
+              fillOpacity={0.6}
             >
               <Popup>
-                <strong>🌧️ {z.zona}</strong><br />
-                Riesgo: {z.riesgo} — {z.nivel}<br />
-                <span style={{ color: '#FF4757' }}>⚠ Zona activa</span>
+                <div style={{ minWidth: 160 }}>
+                  <strong style={{ color: getMarkerColor(incident.gravedad) }}>
+                    {incident.tipo} — {incident.gravedad.toUpperCase()}
+                  </strong>
+                  <br />
+                  <span>📍 {incident.zona}</span><br />
+                  <span>📅 {incident.fecha} · {incident.hora}</span><br />
+                  <span>🤕 Víctimas: {incident.victimas}</span><br />
+                  {incident.lluvia && <span>🌧️ Con lluvia activa</span>}
+                </div>
               </Popup>
             </CircleMarker>
+          ))}
+
+          {/* ── Rain zones as animated cloud icons ── */}
+          {showRain && weatherData?.zonasRiesgo?.map((z, i) => (
+            <Marker
+              key={`r-${i}`}
+              position={[z.lat, z.lng]}
+              icon={makeCloudIcon(z.nivel, z.activo)}
+            >
+              <Popup>
+                <div style={{ minWidth: 160 }}>
+                  <strong>🌧️ {z.zona}</strong><br />
+                  <span>⚠️ Riesgo: {z.riesgo}</span><br />
+                  <span>Nivel: <strong style={{
+                    color: z.nivel === 'crítico' ? '#FF4757' : z.nivel === 'alto' ? '#FF9500' : '#FFD32A'
+                  }}>{z.nivel.toUpperCase()}</strong></span><br />
+                  <span>Estado: {z.activo ? '🔴 ACTIVO' : '⚪ Inactivo'}</span>
+                </div>
+              </Popup>
+            </Marker>
           ))}
 
           {/* ── Routes polylines ── */}

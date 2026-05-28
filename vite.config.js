@@ -7,6 +7,13 @@ export default defineConfig({
     port: 5173,
     open: true,
     host: true,
+    proxy: {
+      '/tomtom': {
+        target: 'https://api.tomtom.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/tomtom/, ''),
+      },
+    },
   },
   build: {
     outDir: 'dist',

@@ -121,6 +121,15 @@ const Trafico = () => {
               style={{ height: '100%', width: '100%' }}>
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution="© OpenStreetMap | Movilidata OS" />
+              {/* TomTom live traffic flow layer */}
+              {import.meta.env.VITE_TOMTOM_API_KEY && (
+                <TileLayer
+                  url={`/tomtom/traffic/map/4/tile/flow/relative/{z}/{x}/{y}.png?key=${import.meta.env.VITE_TOMTOM_API_KEY}&thickness=3`}
+                  opacity={0.8}
+                  maxZoom={22}
+                  tileSize={256}
+                />
+              )}
               {liveZones?.map((z) => {
                 const level = getCongestionLevel(z.congestion);
                 return (

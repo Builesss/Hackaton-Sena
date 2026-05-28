@@ -11,9 +11,64 @@ import { addNoise } from '../../utils/helpers';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Tooltip, Legend, Filler, Title);
 
-// Simulated AI predictions
-const generatePrediction = (base) =>
-  base.map((v) => Math.min(100, Math.max(0, Math.round(v + (Math.random() - 0.4) * 15))));
+const fetchOpenRouterPrediction = async (historico) => {
+  const models = [
+    'openrouter/free',
+    'meta-llama/llama-3.3-70b-instruct:free',
+    'google/gemma-3-12b-it:free',
+    'google/gemini-2.0-flash-lite-preview-02-05:free',
+    'meta-llama/llama-3.1-8b-instruct:free',
+    'mistralai/mistral-7b-instruct:free',
+    'qwen/qwen-2-7b-instruct:free',
+    'microsoft/phi-3-mini-128k-instruct:free',
+    'openchat/openchat-7b:free',
+    'huggingfaceh4/zephyr-7b-beta:free',
+    'undi95/toppy-m-7b:free',
+    'gryphe/mythomax-l2-13b:free',
+    'openrouter/auto'
+  ];
+
+  const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+  if (!apiKey) throw new Error("API Key de OpenRouter no encontrada");
+
+  const prompt = `Actúa como un experto en análisis de tráfico urbano. Dado el siguiente historial de nivel de congestión (0-100) en las últimas 8 horas: ${historico.join(', ')}. Predice el nivel de congestión para las próximas 8 horas. Responde ÚNICAMENTE con un array de 8 números enteros separados por comas, sin texto adicional, sin formato markdown. Ejemplo: 45, 50, 55, 60, 65, 70, 75, 80.`;
+
+  for (const model of models) {
+    try {
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'HTTP-Referer': window.location.origin,
+          'X-Title': 'Previmed Traffic Predictor',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [{ role: 'user', content: prompt }],
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error en modelo ${model}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const content = data.choices[0].message.content;
+      
+      const nums = content.split(',').map(n => parseInt(n.trim(), 10)).filter(n => !isNaN(n));
+      if (nums.length >= 8) {
+        return { prediction: nums.slice(0, 8), modelUsed: model };
+      } else {
+        throw new Error(`Formato incorrecto del modelo ${model}: ${content}`);
+      }
+    } catch (error) {
+      console.warn(`Falló el modelo ${model}, intentando con el siguiente...`, error);
+    }
+  }
+
+  throw new Error("Todos los modelos de IA fallaron.");
+};
 
 const Prediccion = () => {
   const [data, setData] = useState(null);
@@ -37,27 +92,37 @@ const Prediccion = () => {
     setPrediction(null);
     setAiLogs([]);
 
-    const logs = [
-      '🔄 Iniciando agente LLM de predicción...',
-      '📊 Cargando series temporales históricas 2020–2024...',
-      '🧹 Preprocesando datos con Pandas...',
-      '🔍 Analizando patrones por hora, día y estación...',
-      '🌧️ Correlacionando con datos climáticos SIATA...',
-      '🤖 Ejecutando modelo ARIMA + regresión espacial...',
-      '⚡ Aplicando corrección con XGBoost...',
-      '✅ Predicción generada con 91.3% de confianza.',
+    const initialLogs = [
+      '🔄 Iniciando agente LLM de predicción con OpenRouter...',
+      '📊 Cargando series temporales históricas recientes...',
     ];
 
-    for (const log of logs) {
-      await new Promise((r) => setTimeout(r, 600));
+    for (const log of initialLogs) {
       setAiLogs((prev) => [...prev, log]);
+      await new Promise((r) => setTimeout(r, 500));
     }
 
-    // Generate predictions
-    const nextHours = data.seriesTemporal.viernes.slice(8, 16);
-    setPrediction(generatePrediction(nextHours));
-    setConfidence(Math.round(85 + Math.random() * 10));
-    setAiRunning(false);
+    try {
+      const historico = data.seriesTemporal.viernes.slice(8, 16);
+      
+      setAiLogs((prev) => [...prev, '🤖 Solicitando predicción a modelos de IA gratuitos (Fallback activo)...']);
+      
+      const { prediction: newPrediction, modelUsed } = await fetchOpenRouterPrediction(historico);
+      
+      setAiLogs((prev) => [...prev, `✅ Predicción exitosa generada por: ${modelUsed}`]);
+      setPrediction(newPrediction);
+      setConfidence(Math.round(85 + Math.random() * 10));
+    } catch (error) {
+      setAiLogs((prev) => [...prev, `❌ Error crítico: ${error.message}`]);
+      
+      // Fallback a simulación si todo falla
+      setAiLogs((prev) => [...prev, '⚠️ Usando modelo de simulación local como respaldo...']);
+      const historico = data.seriesTemporal.viernes.slice(8, 16);
+      setPrediction(historico.map((v) => Math.min(100, Math.max(0, Math.round(v + (Math.random() - 0.4) * 15)))));
+      setConfidence(Math.round(70 + Math.random() * 10));
+    } finally {
+      setAiRunning(false);
+    }
   };
 
   if (loading) return (
@@ -246,7 +311,7 @@ const Prediccion = () => {
         <div style={{ height: 260 }}>
           <Bar data={probData} options={{ ...probOptions, maintainAspectRatio: false }} />
         </div>
-        <div style={{ marginTop: 14, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+        <div className="grid-3" style={{ marginTop: 14 }}>
           {heatmapZones.map((z) => (
             <div key={z.nombre} style={{
               background: z.prob >= 85 ? 'rgba(255,71,87,0.08)' : z.prob >= 70 ? 'rgba(255,165,2,0.08)' : 'rgba(255,211,42,0.08)',

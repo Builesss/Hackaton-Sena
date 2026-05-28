@@ -157,6 +157,14 @@ const RutasLluvias = () => {
               style={{ height: '100%', width: '100%' }}>
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution="© OpenStreetMap | Movilidata OS" />
+              {/* OpenWeatherMap precipitation layer */}
+              {import.meta.env.VITE_OPENWEATHER_API_KEY && (
+                <TileLayer
+                  url={`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}`}
+                  opacity={0.55}
+                  maxZoom={22}
+                />
+              )}
               {zonasRiesgo.map((z, i) => (
                 <CircleMarker
                   key={i}
