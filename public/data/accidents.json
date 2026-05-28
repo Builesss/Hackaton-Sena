@@ -1,0 +1,43 @@
+{
+  "incidents": [
+    { "id": 1, "lat": 6.2518, "lng": -75.5636, "zona": "Centro", "tipo": "Choque", "gravedad": "grave", "victimas": 2, "fecha": "2024-01-15", "hora": "07:30", "lluvia": false },
+    { "id": 2, "lat": 6.2087, "lng": -75.5675, "zona": "El Poblado", "tipo": "Atropello", "gravedad": "leve", "victimas": 1, "fecha": "2024-01-16", "hora": "22:15", "lluvia": false },
+    { "id": 3, "lat": 6.2399, "lng": -75.6000, "zona": "Laureles", "tipo": "Choque", "gravedad": "grave", "victimas": 3, "fecha": "2024-01-17", "hora": "08:00", "lluvia": true },
+    { "id": 4, "lat": 6.2764, "lng": -75.6094, "zona": "Robledo", "tipo": "Volcamiento", "gravedad": "fatal", "victimas": 1, "fecha": "2024-01-18", "hora": "02:45", "lluvia": true },
+    { "id": 5, "lat": 6.2894, "lng": -75.5849, "zona": "Castilla", "tipo": "Choque", "gravedad": "leve", "victimas": 0, "fecha": "2024-01-19", "hora": "12:20", "lluvia": false },
+    { "id": 6, "lat": 6.3369, "lng": -75.5564, "zona": "Bello", "tipo": "Atropello", "gravedad": "grave", "victimas": 1, "fecha": "2024-01-20", "hora": "18:50", "lluvia": false },
+    { "id": 7, "lat": 6.1741, "lng": -75.5994, "zona": "Itagüí", "tipo": "Choque", "gravedad": "leve", "victimas": 2, "fecha": "2024-01-21", "hora": "07:10", "lluvia": false },
+    { "id": 8, "lat": 6.1712, "lng": -75.5913, "zona": "Envigado", "tipo": "Choque", "gravedad": "grave", "victimas": 1, "fecha": "2024-01-22", "hora": "19:30", "lluvia": true },
+    { "id": 9, "lat": 6.2276, "lng": -75.6088, "zona": "Belén", "tipo": "Atropello", "gravedad": "fatal", "victimas": 1, "fecha": "2024-01-23", "hora": "06:15", "lluvia": false },
+    { "id": 10, "lat": 6.2736, "lng": -75.5636, "zona": "Aranjuez", "tipo": "Choque", "gravedad": "leve", "victimas": 0, "fecha": "2024-01-24", "hora": "14:40", "lluvia": false },
+    { "id": 11, "lat": 6.2550, "lng": -75.5700, "zona": "Centro", "tipo": "Choque", "gravedad": "grave", "victimas": 2, "fecha": "2024-02-01", "hora": "08:15", "lluvia": true },
+    { "id": 12, "lat": 6.2100, "lng": -75.5680, "zona": "El Poblado", "tipo": "Choque", "gravedad": "leve", "victimas": 1, "fecha": "2024-02-02", "hora": "21:00", "lluvia": false },
+    { "id": 13, "lat": 6.2420, "lng": -75.5980, "zona": "Laureles", "tipo": "Atropello", "gravedad": "grave", "victimas": 1, "fecha": "2024-02-03", "hora": "07:45", "lluvia": true },
+    { "id": 14, "lat": 6.2600, "lng": -75.5580, "zona": "Manrique", "tipo": "Choque", "gravedad": "leve", "victimas": 0, "fecha": "2024-02-05", "hora": "16:30", "lluvia": false },
+    { "id": 15, "lat": 6.2480, "lng": -75.5820, "zona": "La América", "tipo": "Volcamiento", "gravedad": "grave", "victimas": 2, "fecha": "2024-02-07", "hora": "23:00", "lluvia": true },
+    { "id": 16, "lat": 6.2650, "lng": -75.5750, "zona": "Castilla", "tipo": "Choque", "gravedad": "fatal", "victimas": 1, "fecha": "2024-02-09", "hora": "03:20", "lluvia": false },
+    { "id": 17, "lat": 6.2200, "lng": -75.5900, "zona": "Belén", "tipo": "Atropello", "gravedad": "leve", "victimas": 1, "fecha": "2024-02-10", "hora": "07:55", "lluvia": false },
+    { "id": 18, "lat": 6.3400, "lng": -75.5600, "zona": "Bello", "tipo": "Choque", "gravedad": "grave", "victimas": 3, "fecha": "2024-02-12", "hora": "18:10", "lluvia": true },
+    { "id": 19, "lat": 6.1800, "lng": -75.5950, "zona": "Itagüí", "tipo": "Choque", "gravedad": "leve", "victimas": 0, "fecha": "2024-02-14", "hora": "11:25", "lluvia": false },
+    { "id": 20, "lat": 6.2300, "lng": -75.5750, "zona": "La Candelaria", "tipo": "Atropello", "gravedad": "grave", "victimas": 1, "fecha": "2024-02-15", "hora": "20:40", "lluvia": false }
+  ],
+  "zonasCriticas": [
+    { "zona": "Centro", "riesgo": 92, "accidentes_2024": 145, "lat": 6.2518, "lng": -75.5636 },
+    { "zona": "El Poblado", "riesgo": 67, "accidentes_2024": 89, "lat": 6.2087, "lng": -75.5675 },
+    { "zona": "Laureles", "riesgo": 75, "accidentes_2024": 102, "lat": 6.2399, "lng": -75.6000 },
+    { "zona": "Robledo", "riesgo": 83, "accidentes_2024": 118, "lat": 6.2764, "lng": -75.6094 },
+    { "zona": "Castilla", "riesgo": 88, "accidentes_2024": 134, "lat": 6.2894, "lng": -75.5849 },
+    { "zona": "Bello", "riesgo": 79, "accidentes_2024": 97, "lat": 6.3369, "lng": -75.5564 },
+    { "zona": "Itagüí", "riesgo": 61, "accidentes_2024": 78, "lat": 6.1741, "lng": -75.5994 },
+    { "zona": "Belén", "riesgo": 70, "accidentes_2024": 91, "lat": 6.2276, "lng": -75.6088 }
+  ],
+  "porMes": {
+    "labels": ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+    "accidentes": [145, 132, 158, 141, 167, 189, 176, 163, 171, 182, 155, 140],
+    "victimas": [89, 78, 96, 85, 103, 118, 109, 97, 104, 112, 94, 86]
+  },
+  "porTipo": {
+    "labels": ["Choque", "Atropello", "Volcamiento", "Caída Moto", "Otros"],
+    "data": [45, 28, 12, 10, 5]
+  }
+}

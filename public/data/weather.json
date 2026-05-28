@@ -1,0 +1,40 @@
+{
+  "actual": {
+    "temperatura": 22,
+    "humedad": 78,
+    "precipitacion": 12.4,
+    "estado": "lluvia moderada",
+    "viento": 15,
+    "visibilidad": "reducida",
+    "alerta": true,
+    "nivelRiesgo": "alto"
+  },
+  "pronostico": [
+    { "hora": "09:00", "lluvia": 8.2, "riesgo": 65, "estado": "lluvia leve" },
+    { "hora": "10:00", "lluvia": 15.6, "riesgo": 82, "estado": "lluvia moderada" },
+    { "hora": "11:00", "lluvia": 22.1, "riesgo": 91, "estado": "lluvia fuerte" },
+    { "hora": "12:00", "lluvia": 18.4, "riesgo": 78, "estado": "lluvia moderada" },
+    { "hora": "13:00", "lluvia": 10.2, "riesgo": 60, "estado": "lluvia leve" },
+    { "hora": "14:00", "lluvia": 3.1, "riesgo": 35, "estado": "nublado" },
+    { "hora": "15:00", "lluvia": 0.5, "riesgo": 20, "estado": "parcialmente nublado" },
+    { "hora": "16:00", "lluvia": 0.0, "riesgo": 15, "estado": "despejado" }
+  ],
+  "zonasRiesgo": [
+    { "lat": 6.2764, "lng": -75.6094, "zona": "Robledo", "riesgo": "inundacion", "nivel": "crítico", "activo": true },
+    { "lat": 6.2894, "lng": -75.5849, "zona": "Castilla", "riesgo": "deslizamiento", "nivel": "alto", "activo": true },
+    { "lat": 6.3369, "lng": -75.5564, "zona": "Bello Norte", "riesgo": "inundacion", "nivel": "alto", "activo": false },
+    { "lat": 6.2276, "lng": -75.6088, "zona": "Belén-La Mota", "riesgo": "deslizamiento", "nivel": "moderado", "activo": true },
+    { "lat": 6.2550, "lng": -75.5580, "zona": "Centro-Av.Oriental", "riesgo": "inundacion", "nivel": "moderado", "activo": false }
+  ],
+  "rutasSeguras": [
+    { "nombre": "Ruta A — Alternativa Centro", "descripcion": "Evita Av. Oriental, usa Av. La Playa", "tiempo": "22 min", "distancia": "8.4 km", "estado": "segura", "recomendada": true },
+    { "nombre": "Ruta B — Por Las Vegas", "descripcion": "Evita zonas bajas, usa vías elevadas", "tiempo": "28 min", "distancia": "11.2 km", "estado": "segura", "recomendada": false },
+    { "nombre": "Ruta C — Vía Robledo", "descripcion": "BLOQUEADA — riesgo de deslizamiento", "tiempo": "—", "distancia": "—", "estado": "bloqueada", "recomendada": false }
+  ],
+  "correlacion": {
+    "labels": ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+    "lluvia_mm": [45, 82, 120, 185, 210, 195, 88, 95, 175, 230, 198, 67],
+    "accidentes": [145, 158, 189, 201, 215, 208, 162, 168, 195, 224, 202, 140],
+    "inundaciones": [2, 5, 8, 14, 18, 16, 6, 7, 13, 20, 17, 3]
+  }
+}

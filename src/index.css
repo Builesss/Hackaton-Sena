@@ -1,0 +1,25 @@
+/* Reset global — estilos base mínimos (el design system está en styles/main.css) */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #080C1A;
+  color: #F0F4FF;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Mobile hamburger visible */
+@media (max-width: 900px) {
+  .menu-btn {
+    display: flex !important;
+  }
+}

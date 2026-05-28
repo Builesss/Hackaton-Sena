@@ -1,0 +1,29 @@
+{
+  "zonas": [
+    { "id": 1, "nombre": "Autopista Norte", "lat": 6.2900, "lng": -75.5700, "congestion": 85, "velocidad": 18, "flujo": 2400, "estado": "crítico" },
+    { "id": 2, "nombre": "Av. El Poblado", "lat": 6.2087, "lng": -75.5675, "congestion": 62, "velocidad": 28, "flujo": 1800, "estado": "moderado" },
+    { "id": 3, "nombre": "Av. Las Vegas", "lat": 6.2300, "lng": -75.5800, "congestion": 71, "velocidad": 22, "flujo": 2100, "estado": "alto" },
+    { "id": 4, "nombre": "Circular 1", "lat": 6.2450, "lng": -75.5950, "congestion": 45, "velocidad": 35, "flujo": 1200, "estado": "normal" },
+    { "id": 5, "nombre": "Av. 33", "lat": 6.2550, "lng": -75.5700, "congestion": 90, "velocidad": 12, "flujo": 2800, "estado": "crítico" },
+    { "id": 6, "nombre": "Calle 10", "lat": 6.2087, "lng": -75.5720, "congestion": 55, "velocidad": 30, "flujo": 1500, "estado": "moderado" },
+    { "id": 7, "nombre": "Av. Guayabal", "lat": 6.1900, "lng": -75.5750, "congestion": 38, "velocidad": 42, "flujo": 900, "estado": "normal" },
+    { "id": 8, "nombre": "Variante Bello", "lat": 6.3369, "lng": -75.5564, "congestion": 78, "velocidad": 20, "flujo": 2200, "estado": "alto" },
+    { "id": 9, "nombre": "Av. Regional", "lat": 6.2500, "lng": -75.5580, "congestion": 95, "velocidad": 8, "flujo": 3100, "estado": "crítico" },
+    { "id": 10, "nombre": "Carrera 80", "lat": 6.2500, "lng": -75.6100, "congestion": 42, "velocidad": 38, "flujo": 1100, "estado": "normal" }
+  ],
+  "seriesTemporal": {
+    "labels": ["00h","01h","02h","03h","04h","05h","06h","07h","08h","09h","10h","11h","12h","13h","14h","15h","16h","17h","18h","19h","20h","21h","22h","23h"],
+    "lunes": [10,5,4,3,5,15,45,82,91,75,60,58,65,62,68,72,85,92,88,70,55,40,28,15],
+    "martes": [12,6,4,3,6,18,48,85,93,78,62,60,67,64,70,74,87,94,90,72,57,42,30,17],
+    "miercoles": [11,5,4,3,5,16,46,83,92,76,61,59,66,63,69,73,86,93,89,71,56,41,29,16],
+    "jueves": [13,6,5,3,6,17,47,84,92,77,62,60,67,64,70,74,87,94,90,72,57,42,30,17],
+    "viernes": [14,7,5,4,7,20,50,87,95,80,65,63,70,67,73,77,90,97,93,75,60,45,33,20],
+    "sabado": [8,4,3,2,4,10,25,40,55,62,68,72,75,73,70,72,78,82,80,72,65,55,42,25],
+    "domingo": [5,3,2,2,3,8,15,25,35,42,48,52,55,53,50,52,58,62,60,52,45,38,28,15]
+  },
+  "prediccion": {
+    "horas": ["09h","10h","11h","12h","13h"],
+    "probabilidad": [78, 65, 52, 68, 85],
+    "zona": "Av. Regional / Autopista Norte"
+  }
+}
