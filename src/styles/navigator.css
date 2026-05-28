@@ -1,0 +1,486 @@
+/* ================================================================
+   PREVIMED — Navigator (User Map View) Styles
+   ================================================================ */
+
+/* ── Full-screen layout ──────────────────────────────────────── */
+.navigator-page {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: #e8eef4;
+  font-family: var(--font-body);
+  z-index: 0;
+}
+
+/* ── Top bar ─────────────────────────────────────────────────── */
+.nav-topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(45, 52, 64, 0.08);
+  box-shadow: 0 2px 20px rgba(45, 52, 64, 0.08);
+}
+
+.nav-logo-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #0066FF, #00DCB4);
+  border-radius: 12px;
+  padding: 6px 12px 6px 8px;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.nav-logo-pill img {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: rgba(255,255,255,0.15);
+  padding: 3px;
+}
+
+.nav-logo-pill span {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+}
+
+/* ── Input panel inside topbar ───────────────────────────────── */
+.nav-inputs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 6px 10px;
+  transition: all var(--transition);
+  position: relative;
+}
+
+.nav-input-row:focus-within {
+  border-color: var(--primary);
+  background: #fff;
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.nav-input-row.dest:focus-within {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px var(--secondary-glow);
+}
+
+.nav-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.nav-dot.origin { background: var(--primary); }
+.nav-dot.dest   { background: var(--secondary); }
+
+.nav-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-primary);
+  min-width: 0;
+}
+
+.nav-input::placeholder { color: var(--text-muted); }
+
+.nav-input-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 2px 4px;
+  border-radius: 6px;
+  color: var(--text-muted);
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.nav-input-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+/* ── Autocomplete dropdown ───────────────────────────────────── */
+.nav-autocomplete {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(45, 52, 64, 0.12);
+  z-index: 1000;
+  overflow: hidden;
+  animation: fadeIn 0.15s ease;
+}
+
+.nav-autocomplete-item {
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background var(--transition);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.nav-autocomplete-item:last-child { border-bottom: none; }
+.nav-autocomplete-item:hover { background: var(--bg-hover); }
+
+.nav-autocomplete-item span:first-child { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+/* ── Route button ────────────────────────────────────────────── */
+.nav-route-btn {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.nav-route-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 102, 255, 0.35);
+}
+
+.nav-route-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* ── User menu ───────────────────────────────────────────────── */
+.nav-user-menu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.nav-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+  border: 2px solid rgba(0,102,255,0.2);
+}
+
+.nav-logout-btn {
+  background: rgba(255, 71, 87, 0.1);
+  border: 1px solid rgba(255, 71, 87, 0.2);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--danger);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.nav-logout-btn:hover { background: rgba(255, 71, 87, 0.18); }
+
+/* ── Map fills the rest ──────────────────────────────────────── */
+.nav-map-wrap {
+  flex: 1;
+  position: relative;
+  margin-top: 100px; /* topbar height approx */
+}
+
+.nav-map-wrap .leaflet-container {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  inset: 0;
+  background: #e8eef4 !important;
+}
+
+/* ── Layer toggle panel (floating bottom-left) ───────────────── */
+.nav-layers-panel {
+  position: absolute;
+  bottom: 140px;
+  left: 16px;
+  z-index: 500;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  min-width: 170px;
+  box-shadow: 0 4px 24px rgba(45, 52, 64, 0.1);
+}
+
+.nav-layers-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.nav-layer-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.nav-layer-toggle:last-child { margin-bottom: 0; }
+
+.nav-toggle-switch {
+  width: 32px;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--border);
+  position: relative;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.nav-toggle-switch.on { background: var(--primary); }
+.nav-toggle-switch.on.green { background: var(--secondary); }
+.nav-toggle-switch.on.orange { background: var(--warning); }
+
+.nav-toggle-switch::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  top: 2px;
+  left: 2px;
+  transition: left 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.nav-toggle-switch.on::after { left: 16px; }
+
+.nav-layer-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ── Route Info strip (floating bottom) ──────────────────────── */
+.nav-route-strip {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  z-index: 500;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 8px 32px rgba(45, 52, 64, 0.12);
+  animation: fadeInUp 0.35s ease;
+}
+
+.nav-strip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.nav-strip-title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-score-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 220, 180, 0.12);
+  border: 1px solid rgba(0, 220, 180, 0.3);
+  border-radius: 99px;
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.nav-strip-stats {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.nav-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-stat-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.nav-stat-value {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.nav-hazards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.nav-hazard-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.nav-hazard-chip.traffic  { background: rgba(255,149,0,0.12); color: var(--warning); }
+.nav-hazard-chip.accident { background: rgba(255,71,87,0.12);  color: var(--danger); }
+.nav-hazard-chip.rain     { background: rgba(0,102,255,0.1);   color: var(--primary); }
+
+/* ── Route alternatives selector ─────────────────────────────── */
+.nav-alt-routes {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.nav-alt-btn {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  transition: all var(--transition);
+  text-align: center;
+}
+
+.nav-alt-btn.active {
+  border-color: var(--primary);
+  background: rgba(0,102,255,0.08);
+  color: var(--primary);
+}
+
+/* ── Map select mode indicator ───────────────────────────────── */
+.nav-map-select-hint {
+  position: absolute;
+  top: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  background: rgba(0,102,255,0.92);
+  color: #fff;
+  border-radius: 99px;
+  padding: 8px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  pointer-events: none;
+  animation: fadeIn 0.2s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,102,255,0.35);
+}
+
+/* ── Loading overlay on map ──────────────────────────────────── */
+.nav-loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+
+.nav-loading-pill {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  box-shadow: 0 4px 24px rgba(45,52,64,0.12);
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .nav-topbar { flex-wrap: wrap; padding: 10px 12px; gap: 8px; }
+  .nav-logo-pill span { display: none; }
+  .nav-map-wrap { margin-top: 160px; }
+  .nav-strip-stats { gap: 12px; }
+  .nav-stat-value { font-size: 15px; }
+  .nav-layers-panel { bottom: 200px; }
+  .nav-route-strip { padding: 12px 14px; }
+}
