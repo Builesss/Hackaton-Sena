@@ -71,17 +71,17 @@ export const CHART_DEFAULTS = {
   animation: { duration: 800, easing: 'easeInOutQuart' },
   plugins: {
     legend: {
-      labels: { color: '#8B9ABB', font: { family: 'Inter', size: 12 } },
+      labels: { color: '#4E5D73', font: { family: 'Inter', size: 12 } },
     },
   },
   scales: {
     x: {
-      ticks: { color: '#8B9ABB', font: { family: 'Inter', size: 11 } },
-      grid: { color: 'rgba(255,255,255,0.05)' },
+      ticks: { color: '#5A6A85', font: { family: 'Inter', size: 11 } },
+      grid: { color: 'rgba(45, 52, 64, 0.08)' },
     },
     y: {
-      ticks: { color: '#8B9ABB', font: { family: 'Inter', size: 11 } },
-      grid: { color: 'rgba(255,255,255,0.05)' },
+      ticks: { color: '#5A6A85', font: { family: 'Inter', size: 11 } },
+      grid: { color: 'rgba(45, 52, 64, 0.08)' },
     },
   },
 };

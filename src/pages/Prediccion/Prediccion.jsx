@@ -207,7 +207,7 @@ const Prediccion = () => {
           <div
             ref={logsRef}
             style={{
-              background: '#05080F',
+              background: '#2D3440',
               borderRadius: 'var(--radius-sm)',
               padding: 14,
               fontFamily: 'monospace',

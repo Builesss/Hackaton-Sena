@@ -9,9 +9,9 @@
   /* Brand */
   --primary:        #0066FF;
   --primary-dark:   #0052CC;
-  --primary-glow:   rgba(0, 102, 255, 0.25);
+  --primary-glow:   rgba(0, 102, 255, 0.15);
   --secondary:      #00DCB4;
-  --secondary-glow: rgba(0, 220, 180, 0.25);
+  --secondary-glow: rgba(0, 220, 180, 0.15);
 
   /* Semantic */
   --danger:  #FF4757;
@@ -20,21 +20,21 @@
   --info:    #0066FF;
   --yellow:  #FF9500;
 
-  /* Background layers */
-  --bg-base:    #151A24;
-  --bg-surface: #1E2430;
-  --bg-card:    #2D3440;
-  --bg-hover:   #3A4252;
-  --bg-input:   #1A202C;
+  /* Background layers (Light Mode) */
+  --bg-base:    #F5F7FA; /* Blanco Neutro */
+  --bg-surface: #FFFFFF;
+  --bg-card:    #FFFFFF;
+  --bg-hover:   #EDF2F7;
+  --bg-input:   #EDF2F7;
 
   /* Borders */
-  --border:       rgba(245, 247, 250, 0.09);
+  --border:       rgba(45, 52, 64, 0.1); /* Based on Gris Urbano */
   --border-hover: rgba(0, 102, 255, 0.35);
 
   /* Text */
-  --text-primary:   #F5F7FA;
-  --text-secondary: #A0AEC0;
-  --text-muted:     #718096;
+  --text-primary:   #2D3440; /* Gris Urbano as primary text */
+  --text-secondary: #5A6A85;
+  --text-muted:     #7A8B9E;
 
   /* Sidebar */
   --sidebar-w: 260px;
@@ -47,8 +47,8 @@
   --radius-sm: 8px;
 
   /* Shadows */
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
-  --shadow-glow: 0 0 24px rgba(0, 102, 255, 0.15);
+  --shadow-card: 0 4px 18px rgba(45, 52, 64, 0.06);
+  --shadow-glow: 0 0 20px rgba(0, 102, 255, 0.06);
 
   /* Transitions */
   --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
@@ -201,9 +201,9 @@ body {
 }
 
 .nav-item.active {
-  background: rgba(0, 212, 170, 0.1);
+  background: rgba(0, 102, 255, 0.08);
   color: var(--primary);
-  border-color: rgba(0, 212, 170, 0.2);
+  border-color: rgba(0, 102, 255, 0.18);
 }
 
 .nav-item.active .nav-icon {
@@ -251,7 +251,7 @@ body {
   right: 0;
   left: var(--sidebar-w);
   height: var(--header-h);
-  background: rgba(8, 12, 26, 0.85);
+  background: rgba(245, 247, 250, 0.85);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
   display: flex;
@@ -290,10 +290,10 @@ body {
   font-size: 13px;
   font-weight: 600;
   color: var(--primary);
-  background: rgba(0, 212, 170, 0.08);
+  background: rgba(0, 102, 255, 0.07);
   padding: 6px 14px;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(0, 212, 170, 0.15);
+  border: 1px solid rgba(0, 102, 255, 0.15);
 }
 
 .header-alert-btn {
