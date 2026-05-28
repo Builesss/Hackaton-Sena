@@ -93,13 +93,13 @@ const Prediccion = () => {
       ...(prediction ? [{
         label: 'Predicción IA — hoy',
         data: prediction,
-        borderColor: '#00D4AA',
-        backgroundColor: 'rgba(0,212,170,0.1)',
+        borderColor: '#0066FF',
+        backgroundColor: 'rgba(0, 102, 255, 0.1)',
         fill: true,
         tension: 0.4,
         borderWidth: 2.5,
         pointRadius: 5,
-        pointBackgroundColor: '#00D4AA',
+        pointBackgroundColor: '#0066FF',
         pointHoverRadius: 8,
       }] : []),
     ],
@@ -170,9 +170,9 @@ const Prediccion = () => {
           color="#6C63FF" bgColor="rgba(108,99,255,0.12)" />
         <StatCard icon="🎯" value={confidence ? `${confidence}%` : '—'} label="Confianza del modelo"
           delta={confidence ? 'Resultado disponible' : 'Ejecuta la predicción'}
-          color="#00D4AA" bgColor="rgba(0,212,170,0.12)" />
+          color="#0066FF" bgColor="rgba(0,102,255,0.12)" />
         <StatCard icon="⏱️" value="2–4h" label="Horizonte de predicción"
-          delta="Anticipación máxima" color="#FFA502" bgColor="rgba(255,165,2,0.12)" />
+          delta="Anticipación máxima" color="#FF9500" bgColor="rgba(255,149,0,0.12)" />
         <StatCard icon="📍" value={heatmapZones.filter(z => z.prob >= 80).length} label="Zonas en alerta predictiva"
           deltaType="up" color="#FF4757" bgColor="rgba(255,71,87,0.12)" />
       </div>
@@ -212,7 +212,7 @@ const Prediccion = () => {
               padding: 14,
               fontFamily: 'monospace',
               fontSize: 12,
-              color: '#00D4AA',
+              color: '#00DCB4',
               height: 240,
               overflowY: 'auto',
               border: '1px solid var(--border)',

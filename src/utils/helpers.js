@@ -3,7 +3,7 @@ import { THRESHOLDS, COLORS } from '../config/config';
 // ─── Risk helpers ───────────────────────────────────────────
 export const getCongestionLevel = (value) => {
   if (value >= THRESHOLDS.congestion.critical) return { label: 'Crítico', color: COLORS.accentRed, bg: 'rgba(255,71,87,0.15)' };
-  if (value >= THRESHOLDS.congestion.high)     return { label: 'Alto',    color: COLORS.accentOrange, bg: 'rgba(255,165,2,0.15)' };
+  if (value >= THRESHOLDS.congestion.high)     return { label: 'Alto',    color: COLORS.accentOrange, bg: 'rgba(255,149,0,0.15)' };
   if (value >= THRESHOLDS.congestion.medium)   return { label: 'Moderado',color: COLORS.accentYellow, bg: 'rgba(255,211,42,0.15)' };
   return { label: 'Normal', color: COLORS.success, bg: 'rgba(46,213,115,0.15)' };
 };
@@ -26,7 +26,7 @@ export const getRainRisk = (mm) => {
 export const getMarkerColor = (gravedad) => {
   const map = {
     fatal: '#FF4757',
-    grave: '#FFA502',
+    grave: '#FF9500',
     leve: '#FFD32A',
   };
   return map[gravedad] || '#8B9ABB';

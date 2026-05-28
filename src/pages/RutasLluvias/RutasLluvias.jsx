@@ -136,7 +136,7 @@ const RutasLluvias = () => {
         <StatCard icon="💨" value={`${actual.viento} km/h`} label="Velocidad del viento"
           color="#6C63FF" bgColor="rgba(108,99,255,0.12)" />
         <StatCard icon="🌡️" value={`${actual.temperatura}°C`} label="Temperatura"
-          delta={`Humedad ${actual.humedad}%`} color="#00D4AA" bgColor="rgba(0,212,170,0.12)" />
+          delta={`Humedad ${actual.humedad}%`} color="#0066FF" bgColor="rgba(0,102,255,0.12)" />
         <StatCard icon="⚠️" value={activeZones.length} label="Zonas de riesgo activas"
           delta={`${zonasRiesgo.length} zonas monitoreadas`} deltaType={activeZones.length > 2 ? 'up' : 'neutral'}
           color="#FF4757" bgColor="rgba(255,71,87,0.12)" />
@@ -164,7 +164,7 @@ const RutasLluvias = () => {
                   radius={z.nivel === 'crítico' ? 22 : z.nivel === 'alto' ? 16 : 12}
                   fillColor={
                     z.nivel === 'crítico' ? '#FF4757' :
-                    z.nivel === 'alto' ? '#FFA502' : '#FFD32A'
+                    z.nivel === 'alto' ? '#FF9500' : '#FFD32A'
                   }
                   color={z.activo ? '#FF4757' : '#4A5568'}
                   weight={2}
@@ -176,7 +176,7 @@ const RutasLluvias = () => {
                       <strong>{z.zona}</strong><br />
                       <span>⚠️ Riesgo: {z.riesgo}</span><br />
                       <span>Nivel: <strong style={{
-                        color: z.nivel === 'crítico' ? '#FF4757' : z.nivel === 'alto' ? '#FFA502' : '#FFD32A'
+                        color: z.nivel === 'crítico' ? '#FF4757' : z.nivel === 'alto' ? '#FF9500' : '#FFD32A'
                       }}>{z.nivel.toUpperCase()}</strong></span><br />
                       <span>Estado: {z.activo ? '🔴 ACTIVO' : '⚪ Inactivo'}</span>
                     </div>

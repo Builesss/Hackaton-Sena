@@ -68,8 +68,8 @@ const Dashboard = () => {
           label="Congestión Promedio"
           delta={criticalZones.length > 0 ? `${criticalZones.length} zonas críticas` : 'Sin zonas críticas'}
           deltaType={criticalZones.length > 2 ? 'up' : 'neutral'}
-          color="#FFA502"
-          bgColor="rgba(255,165,2,0.12)"
+          color="#FF9500"
+          bgColor="rgba(255,149,0,0.12)"
         />
         <StatCard
           icon="🌧️"
@@ -86,8 +86,8 @@ const Dashboard = () => {
           label="Alertas Activas"
           delta="Zonas de riesgo"
           deltaType={activeAlerts > 2 ? 'up' : 'neutral'}
-          color="#00D4AA"
-          bgColor="rgba(0,212,170,0.12)"
+          color="#0066FF"
+          bgColor="rgba(0,102,255,0.12)"
         />
       </div>
 
@@ -104,9 +104,9 @@ const Dashboard = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {[
               { path: '/accidentalidad', icon: '⚠️', label: 'Zonas Críticas de Accidentalidad', color: '#FF4757', desc: 'Heatmap + análisis histórico' },
-              { path: '/trafico', icon: '🚦', label: 'Tráfico en Tiempo Real', color: '#FFA502', desc: 'Flujo vehicular cada 5 minutos', live: true },
-              { path: '/prediccion', icon: '🧠', label: 'Predicción de Congestión IA', color: '#6C63FF', desc: 'Modelos predictivos 2-4h' },
-              { path: '/lluvias', icon: '🌧️', label: 'Rutas Seguras en Lluvias', color: '#00D4AA', desc: 'Correlación clima-accidentes' },
+              { path: '/trafico', icon: '🚦', label: 'Tráfico en Tiempo Real', color: '#FF9500', desc: 'Flujo vehicular cada 5 minutos', live: true },
+              { path: '/prediccion', icon: '🧠', label: 'Predicción de Congestión IA', color: '#0066FF', desc: 'Modelos predictivos 2-4h' },
+              { path: '/lluvias', icon: '🌧️', label: 'Rutas Seguras en Lluvias', color: '#00DCB4', desc: 'Correlación clima-accidentes' },
             ].map((m) => (
               <Link key={m.path} to={m.path} style={{ textDecoration: 'none' }}>
                 <div className="zone-item" style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)' }}>

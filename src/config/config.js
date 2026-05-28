@@ -3,7 +3,7 @@
 // ============================================================
 
 export const APP_CONFIG = {
-  name: 'Medellín Movilidata OS',
+  name: 'PREVIMED Movilidata OS',
   version: '1.0.0',
   description: 'Plataforma Unificada de Movilidad Inteligente',
   hackathon: 'HackData CTGI SENA 2026',
@@ -48,22 +48,22 @@ export const THRESHOLDS = {
 
 // Color palette — design system tokens
 export const COLORS = {
-  primary: '#00D4AA',
-  primaryDark: '#00A886',
-  secondary: '#6C63FF',
+  primary: '#0066FF',
+  primaryDark: '#0052CC',
+  secondary: '#00DCB4',
   accentRed: '#FF4757',
-  accentOrange: '#FFA502',
-  accentBlue: '#2ED9C3',
-  accentYellow: '#FFD32A',
-  bgBase: '#080C1A',
-  bgSurface: '#0F1629',
-  bgCard: '#182040',
-  textPrimary: '#F0F4FF',
-  textSecondary: '#8B9ABB',
-  success: '#2ed573',
-  warning: '#FFA502',
+  accentOrange: '#FF9500',
+  accentBlue: '#0066FF',
+  accentYellow: '#FF9500',
+  bgBase: '#151A24',
+  bgSurface: '#1E2430',
+  bgCard: '#2D3440',
+  textPrimary: '#F5F7FA',
+  textSecondary: '#A0AEC0',
+  success: '#00DCB4',
+  warning: '#FF9500',
   danger: '#FF4757',
-  info: '#00D4AA',
+  info: '#0066FF',
 };
 
 // Chart.js global defaults

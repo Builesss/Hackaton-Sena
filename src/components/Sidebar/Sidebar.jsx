@@ -14,9 +14,26 @@ const Sidebar = ({ isOpen, onClose }) => {
       <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
         {/* Logo */}
         <NavLink to="/" className="sidebar-logo" onClick={onClose}>
-          <div className="sidebar-logo-icon">🚦</div>
+          <div className="sidebar-logo-container" style={{
+            width: 38,
+            height: 38,
+            background: 'linear-gradient(90deg, rgb(0, 102, 255), rgb(0, 220, 180))',
+            borderRadius: 'var(--radius-sm)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 2,
+            boxShadow: '0 0 16px var(--primary-glow)',
+            flexShrink: 0
+          }}>
+            <img 
+              src="/previmed.png" 
+              alt="PREVIMED Logo" 
+              style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '6px', background: '#2D3440' }} 
+            />
+          </div>
           <div className="sidebar-logo-text">
-            <span className="sidebar-logo-name">Movilidata OS</span>
+            <span className="sidebar-logo-name">PREVIMED OS</span>
             <span className="sidebar-logo-sub">Medellín · HackData 2026</span>
           </div>
         </NavLink>

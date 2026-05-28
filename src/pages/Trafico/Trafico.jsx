@@ -42,13 +42,13 @@ const Trafico = () => {
     datasets: [{
       label: `Congestión — ${dayLabels[daySelected]}`,
       data: data.seriesTemporal[daySelected],
-      borderColor: '#00D4AA',
-      backgroundColor: 'rgba(0, 212, 170, 0.08)',
+      borderColor: '#00DCB4',
+      backgroundColor: 'rgba(0, 220, 180, 0.08)',
       fill: true,
       tension: 0.4,
       pointRadius: 3,
       pointHoverRadius: 6,
-      pointBackgroundColor: '#00D4AA',
+      pointBackgroundColor: '#00DCB4',
       borderWidth: 2,
     }],
   };
@@ -91,12 +91,12 @@ const Trafico = () => {
       <div className="grid-4" style={{ marginBottom: 24 }}>
         <StatCard icon="📊" value={`${avgCong}%`} label="Congestión Promedio"
           delta={criticas.length > 0 ? `${criticas.length} zonas críticas` : 'Sin zonas críticas'}
-          deltaType={criticas.length > 2 ? 'up' : 'neutral'} color="#FFA502" bgColor="rgba(255,165,2,0.12)" />
+          deltaType={criticas.length > 2 ? 'up' : 'neutral'} color="#FF9500" bgColor="rgba(255,149,0,0.12)" />
         <StatCard icon="🚗" value={formatKmH(avgVel)} label="Velocidad Promedio"
           delta={avgVel < 20 ? 'Muy lento' : avgVel < 35 ? 'Moderado' : 'Fluido'}
           deltaType={avgVel < 20 ? 'up' : 'down'} color="#6C63FF" bgColor="rgba(108,99,255,0.12)" />
         <StatCard icon="🔢" value={totalFlow} label="Vehículos/hora total"
-          color="#00D4AA" bgColor="rgba(0,212,170,0.12)" />
+          color="#00DCB4" bgColor="rgba(0,220,180,0.12)" />
         <StatCard icon="🔴" value={criticas.length} label="Zonas en estado crítico"
           deltaType={criticas.length > 2 ? 'up' : 'neutral'} color="#FF4757" bgColor="rgba(255,71,87,0.12)" />
       </div>

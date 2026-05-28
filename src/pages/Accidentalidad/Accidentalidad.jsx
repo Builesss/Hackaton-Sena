@@ -53,8 +53,8 @@ const Accidentalidad = () => {
       {
         label: 'Víctimas',
         data: data.porMes.victimas,
-        backgroundColor: 'rgba(255, 165, 2, 0.7)',
-        borderColor: '#FFA502',
+        backgroundColor: 'rgba(255, 149, 0, 0.7)',
+        borderColor: '#FF9500',
         borderWidth: 1,
         borderRadius: 4,
       },
@@ -80,7 +80,7 @@ const Accidentalidad = () => {
     labels: data.porTipo.labels,
     datasets: [{
       data: data.porTipo.data,
-      backgroundColor: ['#FF4757', '#FFA502', '#FFD32A', '#6C63FF', '#8B9ABB'],
+      backgroundColor: ['#FF4757', '#FF9500', '#FFD32A', '#0066FF', '#8B9ABB'],
       borderWidth: 0,
       hoverOffset: 8,
     }],
@@ -116,11 +116,11 @@ const Accidentalidad = () => {
         <StatCard icon="💥" value={formatNumber(totalAccidents)} label="Total Accidentes 2024"
           delta="+8.2% vs 2023" deltaType="up" color="#FF4757" bgColor="rgba(255,71,87,0.12)" />
         <StatCard icon="🤕" value={formatNumber(totalVictimas)} label="Víctimas Totales"
-          delta="Incluye heridos y fatales" color="#FFA502" bgColor="rgba(255,165,2,0.12)" />
+          delta="Incluye heridos y fatales" color="#FF9500" bgColor="rgba(255,149,0,0.12)" />
         <StatCard icon="💀" value={fatales} label="Accidentes Fatales"
           delta="Alta prioridad de intervención" deltaType="up" color="#FF4757" bgColor="rgba(255,71,87,0.08)" />
         <StatCard icon="🌧️" value={`${Math.round(conLluvia / data.incidents.length * 100)}%`}
-          label="Con lluvia activa" delta="Correlación clima–accidente" color="#6C63FF" bgColor="rgba(108,99,255,0.12)" />
+          label="Con lluvia activa" delta="Correlación clima–accidente" color="#0066FF" bgColor="rgba(0,102,255,0.12)" />
       </div>
 
       {/* Map + Right Panel */}
@@ -188,7 +188,7 @@ const Accidentalidad = () => {
           )}
           <div style={{ marginTop: 12, display: 'flex', gap: 16, fontSize: 12 }}>
             <span><span style={{ color: '#FF4757' }}>●</span> Fatal</span>
-            <span><span style={{ color: '#FFA502' }}>●</span> Grave</span>
+            <span><span style={{ color: '#FF9500' }}>●</span> Grave</span>
             <span><span style={{ color: '#FFD32A' }}>●</span> Leve</span>
             <span style={{ color: 'var(--text-muted)' }}>Radio = gravedad del incidente</span>
           </div>
