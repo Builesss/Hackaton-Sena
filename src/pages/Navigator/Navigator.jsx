@@ -10,7 +10,7 @@ import { signOut } from '../../services/auth';
 import { getTrafficData, getAccidentsData, getWeatherData, getCamerasData, getAirQualityData } from '../../services/api';
 import { computeRoutes, reverseGeocode, geocodeAddress } from '../../services/routing';
 import { getCongestionLevel, getRiskLevel, getMarkerColor } from '../../utils/helpers';
-import { accidentIcon, cameraIcon, metroIcon, airQualityIcon, rainZoneIcon } from '../../utils/mapIcons';
+import { accidentIcon, cameraIcon, metroIcon, airQualityIcon, rainZoneIcon, busIcon, userReportIcon } from '../../utils/mapIcons';
 import '../../styles/navigator.css';
 import 'leaflet/dist/leaflet.css';
 
@@ -43,11 +43,14 @@ const originIcon = makeIcon('#0066FF', '📍');
 const destIcon   = makeIcon('#00DCB4', '🎯');
 
 // ─── Map click handler component ───────────────────────────────
-const MapClickHandler = ({ selectMode, onMapClick }) => {
+const MapClickHandler = ({ selectMode, onMapClick, onContextMenu }) => {
   useMapEvents({
     click(e) {
       if (selectMode) onMapClick(e.latlng);
     },
+    contextmenu(e) {
+      if (!selectMode && onContextMenu) onContextMenu(e.latlng);
+    }
   });
   return null;
 };
@@ -108,9 +111,19 @@ const Navigator = () => {
   const [showRain,      setShowRain]      = useState(true);
   const [showCameras,   setShowCameras]   = useState(true);
   const [showAir,       setShowAir]       = useState(false);
+  const [showBuses,     setShowBuses]     = useState(true);
 
   // ── Fly-to point ──────────────────────────────────────────────
   const [flyTarget, setFlyTarget] = useState(null);
+
+  // ── User Reports & Buses ──────────────────────────────────────
+  const [userReports, setUserReports] = useState([]);
+  const [reportModal, setReportModal] = useState(null); // { lat, lng }
+  const [buses, setBuses] = useState([
+    { id: 1, route: [[6.2625, -75.5780], [6.2400, -75.5840]], t: 0, dir: 1, speed: 0.002 },
+    { id: 2, route: [[6.2300, -75.5900], [6.2550, -75.5650]], t: 0.5, dir: -1, speed: 0.0015 },
+    { id: 3, route: [[6.2450, -75.5800], [6.2700, -75.5500]], t: 0.2, dir: 1, speed: 0.0025 }
+  ]);
 
   // ── Load all datasets on mount ────────────────────────────────
   useEffect(() => {
@@ -120,6 +133,21 @@ const Navigator = () => {
     getCamerasData().then(setCamerasData).catch(console.warn);
     getAirQualityData().then(setAirData).catch(console.warn);
   }, []);
+
+  // ── Live Bus Tracking interval ────────────────────────────────
+  useEffect(() => {
+    if (!showBuses) return;
+    const interval = setInterval(() => {
+      setBuses(prev => prev.map(bus => {
+        let nt = bus.t + bus.dir * bus.speed;
+        let ndir = bus.dir;
+        if (nt >= 1) { nt = 1; ndir = -1; }
+        if (nt <= 0) { nt = 0; ndir = 1; }
+        return { ...bus, t: nt, dir: ndir };
+      }));
+    }, 100);
+    return () => clearInterval(interval);
+  }, [showBuses]);
 
   // ── Geolocation ───────────────────────────────────────────────
   const handleGeolocate = () => {
@@ -177,16 +205,28 @@ const Navigator = () => {
 
   // ── Map click to select origin/dest ──────────────────────────
   const handleMapClick = useCallback(async ({ lat, lng }) => {
-    const label = await reverseGeocode(lat, lng);
     if (selectMode === 'origin') {
+      const label = await reverseGeocode(lat, lng);
       setOrigin({ lat, lng, label });
       setOriginText(label);
+      setSelectMode(null);
     } else if (selectMode === 'dest') {
+      const label = await reverseGeocode(lat, lng);
       setDest({ lat, lng, label });
       setDestText(label);
+      setSelectMode(null);
     }
-    setSelectMode(null);
   }, [selectMode]);
+
+  // ── Map contextmenu (long press) to report ───────────────────
+  const handleMapContextMenu = useCallback(({ lat, lng }) => {
+    setReportModal({ lat, lng });
+  }, []);
+
+  const submitReport = (type) => {
+    setUserReports(prev => [...prev, { ...reportModal, type, id: Date.now() }]);
+    setReportModal(null);
+  };
 
   // ── Compute route ─────────────────────────────────────────────
   const handleComputeRoute = async () => {
@@ -355,8 +395,32 @@ const Navigator = () => {
             />
           )}
 
-          <MapClickHandler selectMode={selectMode} onMapClick={handleMapClick} />
+          <MapClickHandler selectMode={selectMode} onMapClick={handleMapClick} onContextMenu={handleMapContextMenu} />
           {flyTarget && <FlyTo point={flyTarget} />}
+
+          {/* ── User Reports ── */}
+          {userReports.map(r => (
+            <Marker key={`rep-${r.id}`} position={[r.lat, r.lng]} icon={userReportIcon(r.type)}>
+              <Popup>
+                <strong>Reporte Ciudadano</strong><br/>
+                <span style={{color: 'var(--text-secondary)'}}>{r.type}</span>
+              </Popup>
+            </Marker>
+          ))}
+
+          {/* ── Live Tracking Buses ── */}
+          {showBuses && buses.map(b => {
+            const lat = b.route[0][0] + (b.route[1][0] - b.route[0][0]) * b.t;
+            const lng = b.route[0][1] + (b.route[1][1] - b.route[0][1]) * b.t;
+            return (
+              <Marker key={`bus-${b.id}`} position={[lat, lng]} icon={busIcon}>
+                <Popup>
+                  <strong>Metroplús en Ruta</strong><br/>
+                  Unidad: #{b.id * 1024}
+                </Popup>
+              </Marker>
+            );
+          })}
 
 
           {/* ── Accident Incidents — Warning Triangle Icons ── */}
@@ -540,6 +604,27 @@ const Navigator = () => {
           </div>
         )}
 
+        {/* ── Report Modal (Waze style) ── */}
+        {reportModal && (
+          <div style={{
+            position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }} onClick={() => setReportModal(null)}>
+            <div style={{
+              background: '#fff', padding: 24, borderRadius: 16, width: 300, textAlign: 'center',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
+            }} onClick={e => e.stopPropagation()}>
+              <h3 style={{ marginBottom: 16, fontSize: 16 }}>Crear Reporte Ciudadano</h3>
+              <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 20 }}>¿Qué acabas de ver en esta ubicación?</p>
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button onClick={() => submitReport('Choque')} style={{ padding: '12px 16px', background: 'rgba(255,71,87,0.1)', color: 'var(--danger)', border: '1px solid var(--danger)', borderRadius: 12, cursor: 'pointer', flex: 1 }}>💥 Choque</button>
+                <button onClick={() => submitReport('Inundación')} style={{ padding: '12px 16px', background: 'rgba(0,102,255,0.1)', color: 'var(--primary)', border: '1px solid var(--primary)', borderRadius: 12, cursor: 'pointer', flex: 1 }}>🌊 Inundación</button>
+                <button onClick={() => submitReport('Peligro')} style={{ padding: '12px 16px', background: 'rgba(255,149,0,0.1)', color: 'var(--warning)', border: '1px solid var(--warning)', borderRadius: 12, cursor: 'pointer', flex: '1 1 100%' }}>⚠️ Otro Peligro</button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ── Layer toggles panel ── */}
         <div className="nav-layers-panel">
           <div className="nav-layers-title">Capas del mapa</div>
@@ -549,6 +634,7 @@ const Navigator = () => {
             { key: 'rain',      label: '🌧️ Lluvia',      val: showRain,      set: setShowRain,      cls: 'orange' },
             { key: 'cameras',   label: '📷 Radares',     val: showCameras,   set: setShowCameras,   cls: '' },
             { key: 'air',       label: '💨 Aire',        val: showAir,       set: setShowAir,       cls: 'info' },
+            { key: 'buses',     label: '🚌 Buses Live',  val: showBuses,     set: setShowBuses,     cls: 'green' },
           ].map(({ key, label, val, set, cls }) => (
             <div key={key} className="nav-layer-toggle" onClick={() => set(v => !v)}>
               <div className={`nav-toggle-switch ${val ? `on ${cls}` : ''}`} />

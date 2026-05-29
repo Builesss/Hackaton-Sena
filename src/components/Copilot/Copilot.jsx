@@ -10,6 +10,7 @@ const Copilot = () => {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef(null);
 
   // Auto-scroll
@@ -17,10 +18,31 @@ const Copilot = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
-    const userMsg = input.trim();
-    setInput('');
+  const startListening = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Tu navegador no soporta reconocimiento de voz. Usa Chrome o Edge.");
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'es-CO';
+    recognition.interimResults = false;
+    
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
+    recognition.onresult = (e) => {
+      const text = e.results[0][0].transcript;
+      setInput(text);
+      handleSend(text, true);
+    };
+    recognition.start();
+  };
+
+  const handleSend = async (overrideText = null, fromVoice = false) => {
+    const userMsg = typeof overrideText === 'string' ? overrideText.trim() : input.trim();
+    if (!userMsg) return;
+    if (typeof overrideText !== 'string') setInput('');
+    
     setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
     setLoading(true);
 
@@ -32,6 +54,12 @@ const Copilot = () => {
       
       const response = await fetchChatbotResponse(userMsg, context);
       setMessages(prev => [...prev, { role: 'ai', text: response }]);
+
+      if (fromVoice && window.speechSynthesis) {
+        const utterance = new SpeechSynthesisUtterance(response);
+        utterance.lang = 'es-CO';
+        window.speechSynthesis.speak(utterance);
+      }
     } catch (e) {
       setMessages(prev => [...prev, { role: 'ai', text: 'Hubo un error al procesar tu solicitud. Revisa la consola.' }]);
       console.error(e);
@@ -67,6 +95,14 @@ const Copilot = () => {
           </div>
 
           <div className="copilot-input-area">
+            <button 
+              className={`copilot-mic-btn ${isListening ? 'listening' : ''}`}
+              onClick={startListening}
+              disabled={loading || isListening}
+              title="Hablar por micrófono"
+            >
+              🎙️
+            </button>
             <input 
               type="text" 
               placeholder="Pregúntale a la IA..." 
@@ -74,7 +110,7 @@ const Copilot = () => {
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSend()}
             />
-            <button onClick={handleSend} disabled={loading || !input.trim()}>
+            <button className="copilot-send-btn" onClick={() => handleSend()} disabled={loading || !input.trim()}>
               ➔
             </button>
           </div>

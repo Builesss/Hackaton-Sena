@@ -298,3 +298,64 @@ export const metroIcon = L.divIcon({
   iconAnchor:  [16, 38],
   popupAnchor: [0, -40],
 });
+
+// ─────────────────────────────────────────────────────────────────
+// BUSES (Live Tracking) — Ícono de bus en movimiento
+// ─────────────────────────────────────────────────────────────────
+export const busIcon = L.divIcon({
+  className: '',
+  html: `
+    <div style="
+      width:40px;height:40px;
+      background:linear-gradient(135deg, #27ae60, #2ecc71);
+      border:3px solid white;
+      border-radius:12px;
+      box-shadow:0 6px 16px rgba(46,204,113,0.6);
+      display:flex;align-items:center;justify-content:center;
+      font-size:22px;
+      transition: all 0.3s linear;
+    ">🚌</div>`,
+  iconSize:    [40, 40],
+  iconAnchor:  [20, 20],
+  popupAnchor: [0, -22],
+});
+
+// ─────────────────────────────────────────────────────────────────
+// REPORTES CIUDADANOS (Waze style)
+// ─────────────────────────────────────────────────────────────────
+export const userReportIcon = (type) => {
+  let bg = '#34495e';
+  let emoji = '📍';
+  
+  if (type === 'Choque') { bg = PALETTE.critical; emoji = '💥'; }
+  if (type === 'Inundación') { bg = PALETTE.info; emoji = '🌊'; }
+  if (type === 'Peligro') { bg = PALETTE.high; emoji = '⚠️'; }
+
+  return L.divIcon({
+    className: '',
+    html: `
+      <div style="
+        width:34px;height:34px;
+        background:${bg};
+        border:2px dashed white;
+        border-radius:50%;
+        box-shadow:0 4px 12px rgba(0,0,0,0.4);
+        display:flex;align-items:center;justify-content:center;
+        font-size:16px;
+        animation: pulseReport 2s infinite;
+      ">
+        ${emoji}
+        <style>
+          @keyframes pulseReport {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+          }
+        </style>
+      </div>`,
+    iconSize:    [34, 34],
+    iconAnchor:  [17, 17],
+    popupAnchor: [0, -20],
+  });
+};
+
