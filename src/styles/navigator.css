@@ -521,18 +521,21 @@
     margin-top: 175px;
   }
 
-  /* Move layers panel to top right to avoid colliding with bottom strip */
+  /* Move layers panel to top right and make it compact/scrollable to avoid colliding with bottom strip */
   .nav-layers-panel {
-    top: 185px;
+    top: 210px; /* Below the topbar */
     bottom: auto;
     left: auto;
     right: 10px;
     min-width: 0;
-    padding: 10px 12px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    border-radius: 12px;
+    gap: 8px;
+    border-radius: 10px;
+    z-index: 600; /* Sit above the bottom panel if they overlap */
+    max-height: 40vh; /* Prevent overflowing the screen */
+    overflow-y: auto;
   }
 
   .nav-layers-title {
@@ -541,6 +544,11 @@
 
   .nav-layer-toggle {
     margin-bottom: 0;
+    gap: 6px;
+  }
+
+  .nav-layer-label {
+    font-size: 11px;
   }
 
   /* Map hint below topbar */
