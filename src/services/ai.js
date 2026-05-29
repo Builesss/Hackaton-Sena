@@ -59,14 +59,23 @@ export const fetchChatbotResponse = async (query, contextData) => {
   const prompt = `
 Eres PREVIMED Copilot, un asistente experto en movilidad urbana e IA para la ciudad de Medellín.
 Estás asesorando a un funcionario de la alcaldía/secretaría de movilidad.
-A continuación te proporciono el contexto actual de la ciudad (datos reales en vivo y bases históricas):
---- CONTEXTO ---
-Accidentes graves recientes (Histórico de Zonas Críticas): ${JSON.stringify(contextData.accidents?.zonasCriticas?.slice(0,3))}
-Tráfico en vivo (zonas): ${JSON.stringify(contextData.traffic?.zonas?.filter(z => z.congestion > 50).map(z => z.nombre))}
-Clima actual: ${contextData.weather?.actual?.estado}, Precipitaciones: ${contextData.weather?.actual?.precipitacion}mm
+
+--- INSTRUCCIONES ESTRICTAS ---
+1. Responde ÚNICAMENTE basándote en los datos proporcionados en la sección de CONTEXTO a continuación.
+2. NUNCA inventes, asumas o alucines datos de tráfico, clima, calidad del aire o accidentes que no estén en el contexto.
+3. Si el usuario te pregunta por algo que no está en los datos provistos, dile amablemente que actualmente no tienes sensores que reporten esa información.
+4. Responde de manera profesional, concisa, con viñetas si es necesario y directo al punto.
+
+--- CONTEXTO EN TIEMPO REAL ---
+Tráfico en vivo (zonas con mayor congestión): ${JSON.stringify(contextData.traffic?.zonas?.filter(z => z.congestion >= 35).map(z => ({ zona: z.nombre, nivel: z.estado, velocidad: z.velocidad + 'km/h' })) || 'Ninguna')}
+Accidentes graves recientes (Zonas Críticas): ${JSON.stringify(contextData.accidents?.zonasCriticas?.slice(0,3).map(z => ({ zona: z.zona, riesgo: z.riesgo })) || 'Sin datos')}
+Incidentes puntuales de tráfico actuales: ${JSON.stringify(contextData.accidents?.incidents?.slice(0,3).map(i => i.tipo) || 'Sin incidentes reportados')}
+Clima actual: ${contextData.weather?.actual?.estado || 'Desconocido'}, Precipitaciones: ${contextData.weather?.actual?.precipitacion || 0}mm, Viento: ${contextData.weather?.actual?.viento || 0}km/h
+Zonas con riesgo actual por lluvia cruzada con accidentes: ${JSON.stringify(contextData.weather?.zonasRiesgo?.filter(z => z.activo).map(z => z.zona) || 'Ninguna')}
+Calidad del Aire (Promedio PM2.5): ${contextData.air?.promedioCiudad?.pm25 || 'N/A'} (${contextData.air?.promedioCiudad?.estado || 'N/A'})
+Total de fotomultas/radares activos: ${contextData.cameras?.cameras?.length || 0}
 --- FIN CONTEXTO ---
 
-Responde la siguiente pregunta del usuario de manera profesional, concisa, con viñetas si es necesario y directo al punto. Menciona datos específicos del contexto si son relevantes.
 PREGUNTA DEL USUARIO: "${query}"
 `;
   const { content } = await callOpenRouter(prompt);

@@ -12,6 +12,7 @@ const fetchData = async (url) => {
 };
 
 export const getAccidentsData   = () => fetchData(API_ENDPOINTS.accidents);
+export const getMetroplusRoutes = () => fetchData('/data/alimentadora_ruta.geojson');
 
 export const getWeatherData = async () => {
   const data = await fetchData(API_ENDPOINTS.weather);

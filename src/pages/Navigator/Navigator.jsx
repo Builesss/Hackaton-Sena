@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
   MapContainer, TileLayer, Popup,
-  Polyline, Marker, useMapEvents, useMap,
+  Polyline, Marker, useMapEvents, useMap, GeoJSON
 } from 'react-leaflet';
 import L from 'leaflet';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { signOut } from '../../services/auth';
-import { getTrafficData, getAccidentsData, getWeatherData, getCamerasData, getAirQualityData } from '../../services/api';
+import { getTrafficData, getAccidentsData, getWeatherData, getCamerasData, getAirQualityData, getMetroplusRoutes } from '../../services/api';
 import { computeRoutes, reverseGeocode, geocodeAddress } from '../../services/routing';
 import { getCongestionLevel, getRiskLevel, getMarkerColor } from '../../utils/helpers';
 import { accidentIcon, cameraIcon, metroIcon, airQualityIcon, rainZoneIcon, busIcon, userReportIcon } from '../../utils/mapIcons';
@@ -83,6 +83,7 @@ const Navigator = () => {
   const [weatherData,   setWeatherData]   = useState(null);
   const [camerasData,   setCamerasData]   = useState(null);
   const [airData,       setAirData]       = useState(null);
+  const [metroplusRoutes, setMetroplusRoutes] = useState(null);
 
   // ── Location state ────────────────────────────────────────────
   const [origin, setOrigin]   = useState(null); // { lat, lng, label }
@@ -111,19 +112,14 @@ const Navigator = () => {
   const [showRain,      setShowRain]      = useState(true);
   const [showCameras,   setShowCameras]   = useState(true);
   const [showAir,       setShowAir]       = useState(false);
-  const [showBuses,     setShowBuses]     = useState(true);
+  const [showMetroplus, setShowMetroplus] = useState(true);
 
   // ── Fly-to point ──────────────────────────────────────────────
   const [flyTarget, setFlyTarget] = useState(null);
 
-  // ── User Reports & Buses ──────────────────────────────────────
+  // ── User Reports ──────────────────────────────────────────────
   const [userReports, setUserReports] = useState([]);
   const [reportModal, setReportModal] = useState(null); // { lat, lng }
-  const [buses, setBuses] = useState([
-    { id: 1, route: [[6.2625, -75.5780], [6.2400, -75.5840]], t: 0, dir: 1, speed: 0.002 },
-    { id: 2, route: [[6.2300, -75.5900], [6.2550, -75.5650]], t: 0.5, dir: -1, speed: 0.0015 },
-    { id: 3, route: [[6.2450, -75.5800], [6.2700, -75.5500]], t: 0.2, dir: 1, speed: 0.0025 }
-  ]);
 
   // ── Load all datasets on mount ────────────────────────────────
   useEffect(() => {
@@ -132,22 +128,8 @@ const Navigator = () => {
     getWeatherData().then(setWeatherData).catch(console.warn);
     getCamerasData().then(setCamerasData).catch(console.warn);
     getAirQualityData().then(setAirData).catch(console.warn);
+    getMetroplusRoutes().then(setMetroplusRoutes).catch(console.warn);
   }, []);
-
-  // ── Live Bus Tracking interval ────────────────────────────────
-  useEffect(() => {
-    if (!showBuses) return;
-    const interval = setInterval(() => {
-      setBuses(prev => prev.map(bus => {
-        let nt = bus.t + bus.dir * bus.speed;
-        let ndir = bus.dir;
-        if (nt >= 1) { nt = 1; ndir = -1; }
-        if (nt <= 0) { nt = 0; ndir = 1; }
-        return { ...bus, t: nt, dir: ndir };
-      }));
-    }, 100);
-    return () => clearInterval(interval);
-  }, [showBuses]);
 
   // ── Geolocation ───────────────────────────────────────────────
   const handleGeolocate = () => {
@@ -408,19 +390,18 @@ const Navigator = () => {
             </Marker>
           ))}
 
-          {/* ── Live Tracking Buses ── */}
-          {showBuses && buses.map(b => {
-            const lat = b.route[0][0] + (b.route[1][0] - b.route[0][0]) * b.t;
-            const lng = b.route[0][1] + (b.route[1][1] - b.route[0][1]) * b.t;
-            return (
-              <Marker key={`bus-${b.id}`} position={[lat, lng]} icon={busIcon}>
-                <Popup>
-                  <strong>Metroplús en Ruta</strong><br/>
-                  Unidad: #{b.id * 1024}
-                </Popup>
-              </Marker>
-            );
-          })}
+          {/* ── Metroplus Real Routes ── */}
+          {showMetroplus && metroplusRoutes && (
+            <GeoJSON 
+              data={metroplusRoutes} 
+              style={{ color: '#27ae60', weight: 4, opacity: 0.7 }}
+              onEachFeature={(feature, layer) => {
+                if (feature.properties && feature.properties.linea) {
+                  layer.bindPopup(`<strong>Ruta Metroplús</strong><br/>${feature.properties.linea}`);
+                }
+              }}
+            />
+          )}
 
 
           {/* ── Accident Incidents — Warning Triangle Icons ── */}
@@ -634,7 +615,7 @@ const Navigator = () => {
             { key: 'rain',      label: '🌧️ Lluvia',      val: showRain,      set: setShowRain,      cls: 'orange' },
             { key: 'cameras',   label: '📷 Radares',     val: showCameras,   set: setShowCameras,   cls: '' },
             { key: 'air',       label: '💨 Aire',        val: showAir,       set: setShowAir,       cls: 'info' },
-            { key: 'buses',     label: '🚌 Buses Live',  val: showBuses,     set: setShowBuses,     cls: 'green' },
+            { key: 'metroplus', label: '🚌 Rutas Bus',   val: showMetroplus, set: setShowMetroplus, cls: 'green' },
           ].map(({ key, label, val, set, cls }) => (
             <div key={key} className="nav-layer-toggle" onClick={() => set(v => !v)}>
               <div className={`nav-toggle-switch ${val ? `on ${cls}` : ''}`} />

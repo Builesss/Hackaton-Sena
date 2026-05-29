@@ -144,8 +144,30 @@ export const reverseGeocode = async (lat, lng) => {
   }
 };
 
-// ─── Forward Geocode (Nominatim, Medellín bias) ───────────────────
+// ─── Forward Geocode (TomTom / Nominatim, Medellín bias) ───────────
 export const geocodeAddress = async (query) => {
+  const tomtomKey = import.meta.env.VITE_TOMTOM_API_KEY;
+  if (tomtomKey) {
+    try {
+      // Use TomTom Search API which is much better at Colombian nomenclature (e.g., Carrera 43 #58-74)
+      const url = `https://api.tomtom.com/search/2/geocode/${encodeURIComponent(query)}.json?key=${tomtomKey}&countrySet=CO&lat=6.2442&lon=-75.5812&radius=20000&language=es-ES`;
+      const res = await fetch(url);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.results && data.results.length > 0) {
+          return data.results.map((r) => ({
+            label: r.address.freeformAddress,
+            lat: r.position.lat,
+            lng: r.position.lon,
+          }));
+        }
+      }
+    } catch (e) {
+      console.warn("TomTom geocode failed, falling back to Nominatim", e);
+    }
+  }
+
+  // Fallback to Nominatim
   try {
     const res = await fetch(
       `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query + ', Medellín, Colombia')}&format=json&limit=5&accept-language=es`

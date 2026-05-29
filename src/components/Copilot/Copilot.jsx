@@ -19,23 +19,36 @@ const Copilot = () => {
   }, [messages]);
 
   const startListening = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert("Tu navegador no soporta reconocimiento de voz. Usa Chrome o Edge.");
-      return;
+    try {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Tu navegador no soporta reconocimiento de voz. Usa Chrome o Edge.");
+        return;
+      }
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'es-CO';
+      recognition.interimResults = false;
+      
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      recognition.onerror = (e) => {
+        setIsListening(false);
+        console.error("Error de voz:", e.error);
+        if (e.error === 'not-allowed') {
+          alert("Debes permitir el acceso al micrófono en tu navegador.");
+        }
+      };
+      recognition.onresult = (e) => {
+        const text = e.results[0][0].transcript;
+        setInput(text);
+        handleSend(text, true);
+      };
+      recognition.start();
+    } catch (err) {
+      console.error("Excepción en reconocimiento de voz:", err);
+      setIsListening(false);
+      alert("Ocurrió un error al intentar iniciar el micrófono.");
     }
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'es-CO';
-    recognition.interimResults = false;
-    
-    recognition.onstart = () => setIsListening(true);
-    recognition.onend = () => setIsListening(false);
-    recognition.onresult = (e) => {
-      const text = e.results[0][0].transcript;
-      setInput(text);
-      handleSend(text, true);
-    };
-    recognition.start();
   };
 
   const handleSend = async (overrideText = null, fromVoice = false) => {
@@ -47,10 +60,10 @@ const Copilot = () => {
     setLoading(true);
 
     try {
-      const [accidents, traffic, weather] = await Promise.all([
-        getAccidentsData(), getTrafficData(), getWeatherData()
+      const [accidents, traffic, weather, air, cameras] = await Promise.all([
+        getAccidentsData(), getTrafficData(), getWeatherData(), getAirQualityData(), getCamerasData()
       ]);
-      const context = { accidents, traffic, weather };
+      const context = { accidents, traffic, weather, air, cameras };
       
       const response = await fetchChatbotResponse(userMsg, context);
       setMessages(prev => [...prev, { role: 'ai', text: response }]);
