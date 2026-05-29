@@ -20,9 +20,10 @@ Medellín Movilidata OS es una **Single Page Application (SPA)** construida con 
 │  │             │  │  Dashboard │ Accidentalidad           │ │
 │  │  Dashboard  │  │  Tráfico   │ Predicción               │ │
 │  │  Accident.  │  │  Lluvias                             │ │
-│  │  Tráfico    │  │                                      │ │
-│  │  Predicc.   │  │  Leaflet Maps + Chart.js             │ │
-│  │  Lluvias    │  │                                      │ │
+│  │  Tráfico    │  │  Navigator (Vista Ciudadano)         │ │
+│  │  Predicc.   │  │                                      │ │
+│  │  Lluvias    │  │  Leaflet Maps + Chart.js             │ │
+│  │             │  │  AI Copilot (Asistente LLM)          │ │
 │  └─────────────┘  └──────────────────────────────────────┘ │
 │                                                             │
 │  ┌─────────────────────────────────────────────────────┐   │
@@ -72,9 +73,9 @@ Medellín Movilidata OS es una **Single Page Application (SPA)** construida con 
 | Paquete | Rol |
 |---|---|
 | `react-hot-toast` | Sistema de notificaciones toast |
-| `date-fns` | Utilidades de fecha/hora |
-| `axios` | Cliente HTTP (disponible para APIs reales) |
+| `html2pdf.js` | Generación de reportes PDF en cliente |
 | `lucide-react` | Sistema de iconografía SVG |
+| React.lazy + Suspense | Lazy loading de componentes (Code Splitting) |
 
 ---
 
@@ -103,7 +104,8 @@ src/
 │   ├── Accidentalidad/   # Módulo 1 — zonas críticas
 │   ├── Trafico/          # Módulo 2 — tráfico en tiempo real
 │   ├── Prediccion/       # Módulo 3 — predicción IA
-│   └── RutasLluvias/     # Módulo 4 — rutas en lluvias
+│   ├── RutasLluvias/     # Módulo 4 — rutas en lluvias
+│   └── Navigator/        # Módulo 5 — vista interactiva ciudadano
 │
 ├── services/
 │   └── api.js            # Fetching de datos + caché en memoria
@@ -112,7 +114,8 @@ src/
 │   └── useRealTime.js    # useRealTime, useSimulatedTraffic, useClock
 │
 ├── utils/
-│   └── helpers.js        # Funciones puras: colores, formatos, PWA
+│   ├── helpers.js        # Funciones puras: colores, formatos, PWA
+│   └── mapIcons.js       # Biblioteca de marcadores SVG premium para Leaflet
 │
 └── styles/
     └── main.css          # Design system completo (variables, layout,
@@ -211,6 +214,20 @@ setInterval(() => {
 **Componente:** `RutasLluvias.jsx`  
 **Correlación implementada:** lluvia (mm) ↔ accidentes (dual Y-axis en Chart.js)
 
+### 5.5 AI Copilot y Generación de Reportes
+
+**Componente:** `Copilot.jsx` y `ai.js`  
+**Uso de IA Avanzada:** 
+- Un asistente de panel lateral persistente (Copilot) que permite hacer consultas en lenguaje natural (ej. "Resume los incidentes actuales").
+- Generación de reportes PDF dinámicos interactuando con `html2pdf.js`, insertando análisis semántico automático del estado vial basado en los datos actuales de los mapas.
+
+### 5.6 Vista Ciudadano (Navigator)
+
+**Componente:** `Navigator.jsx`  
+Una vista full-screen enfocada en el usuario final.
+- Integra Fotomultas, Estaciones de Metro, Calidad del Aire (PM2.5), y control granular de capas.
+- Utiliza **mapIcons.js**, una librería 100% nativa y custom de CSS/SVG para generar íconos dinámicos en el mapa (ej. pulsos CSS en zonas de congestión, medidores circulares para calidad del aire, y animación de lluvia).
+
 ---
 
 ## 6. Sistema de Diseño
@@ -219,20 +236,21 @@ setInterval(() => {
 
 ```css
 :root {
-  --primary:     #00D4AA;  /* Teal — color de marca */
-  --secondary:   #6C63FF;  /* Violeta — tecnología */
+  --primary:     #0066FF;  /* Azul brillante — color de marca */
+  --secondary:   #00DCB4;  /* Turquesa */
   --danger:      #FF4757;  /* Rojo — alertas críticas */
-  --warning:     #FFA502;  /* Naranja — advertencias */
-  --success:     #2ED573;  /* Verde — estado OK */
-  --bg-base:     #080C1A;  /* Fondo base oscuro */
-  --bg-card:     #182040;  /* Fondo de tarjetas */
-  --text-primary:#F0F4FF;  /* Texto principal */
+  --warning:     #FF9500;  /* Naranja — advertencias */
+  --success:     #00DCB4;  /* Verde/Turquesa — estado OK */
+  --bg-base:     #F5F7FA;  /* Blanco Neutro base */
+  --bg-card:     #FFFFFF;  /* Fondo de tarjetas */
+  --text-primary:#2D3440;  /* Gris Urbano (principal) */
 }
 ```
 
 ### 6.2 Grid System
 
 ```css
+.grid-5   /* 5 columnas → 3 en tablet → 1 en móvil */
 .grid-4   /* 4 columnas → 2 en tablet → 1 en móvil */
 .grid-2   /* 2 columnas → 1 en móvil */
 .grid-2-1 /* 2/3 + 1/3 → 1 en móvil */
@@ -277,10 +295,10 @@ export const registerServiceWorker = async () => {
 
 ## 9. Rendimiento
 
-- **Code splitting** en `vite.config.js`: `vendor`, `maps`, `charts` en chunks separados
-- **Lazy loading de mapas**: `mapReady` con `setTimeout(100ms)` evita flash
-- **Caché en servicios**: evita re-fetching de JSONs estáticos
-- **CSS transitions** aceleradas por GPU: `transform`, `opacity`
+- **Code Splitting (Lazy Loading)** en `App.jsx`: Componentes pesados (Páginas) se cargan bajo demanda con `React.lazy` y `<Suspense>`, reduciendo el tiempo de carga interactiva.
+- **Renderizado vectorial de SVG (Leaflet)**: Uso de íconos en DivIcon con marcado SVG puro en lugar de imágenes pesadas, usando aceleración de hardware para animaciones.
+- **Caché en servicios**: evita re-fetching de JSONs estáticos.
+- **CSS transitions** aceleradas por GPU: `transform`, `opacity`.
 
 ---
 
