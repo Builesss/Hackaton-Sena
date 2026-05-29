@@ -667,6 +667,7 @@ body {
 
 /* ── Responsive ─────────────────────────────────── */
 @media (max-width: 1200px) {
+  .grid-5 { grid-template-columns: repeat(3, 1fr); }
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
 }
 
@@ -686,12 +687,13 @@ body {
 
   .main-content { margin-left: 0; }
   .header { left: 0; }
+  .grid-5, .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-1-2, .grid-2-1 { grid-template-columns: 1fr; }
   .menu-btn { display: block !important; }
 }
 
 @media (max-width: 640px) {
-  .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+  .grid-5, .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
   .page-wrapper { padding: 16px; }
   .header { padding: 0 16px; }
   .header-title { font-size: 15px; }
