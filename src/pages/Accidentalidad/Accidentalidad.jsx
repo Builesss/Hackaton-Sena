@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Popup, LayerGroup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Popup, LayerGroup, CircleMarker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import {
@@ -13,23 +13,57 @@ import StatCard from '../../components/Cards/StatCard';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend, Title);
 
+const SEVERITY_COLORS = { fatal: '#FF0000', grave: '#FF6600', leve: '#FFD700' };
+
 const HeatmapLayer = ({ data }) => {
   const map = useMap();
+  const [useFallback, setUseFallback] = useState(false);
+
   useEffect(() => {
-    if (!data || data.length === 0 || !L.heatLayer) return;
-    const points = data.map(p => [
-      p.lat, 
-      p.lng, 
-      p.gravedad === 'fatal' ? 1.0 : p.gravedad === 'grave' ? 0.7 : 0.4
-    ]);
-    const heatLayer = L.heatLayer(points, {
-      radius: 25,
-      blur: 20,
-      maxZoom: 16,
-      gradient: { 0.4: 'yellow', 0.7: 'orange', 1: 'red' }
-    }).addTo(map);
-    return () => { map.removeLayer(heatLayer); };
+    if (!data || data.length === 0) return;
+
+    // Try using the global L.heatLayer from the CDN script
+    const globalL = window.L;
+    if (globalL && typeof globalL.heatLayer === 'function') {
+      const points = data.map(p => [
+        p.lat, 
+        p.lng, 
+        p.gravedad === 'fatal' ? 1.0 : p.gravedad === 'grave' ? 0.7 : 0.4
+      ]);
+      const heatLayer = globalL.heatLayer(points, {
+        radius: 25,
+        blur: 20,
+        maxZoom: 16,
+        gradient: { 0.4: 'yellow', 0.7: 'orange', 1: 'red' }
+      }).addTo(map);
+      return () => { map.removeLayer(heatLayer); };
+    } else {
+      // leaflet.heat plugin not available — use CircleMarker fallback
+      console.warn('leaflet.heat plugin not loaded, using circle markers as fallback');
+      setUseFallback(true);
+    }
   }, [data, map]);
+
+  // Fallback: render semi-transparent circles per incident
+  if (useFallback && data && data.length > 0) {
+    return (
+      <LayerGroup>
+        {data.map((p, i) => (
+          <CircleMarker
+            key={`heat-${i}`}
+            center={[p.lat, p.lng]}
+            radius={p.gravedad === 'fatal' ? 10 : p.gravedad === 'grave' ? 7 : 5}
+            pathOptions={{
+              color: 'transparent',
+              fillColor: SEVERITY_COLORS[p.gravedad] || '#FFD700',
+              fillOpacity: 0.45,
+            }}
+          />
+        ))}
+      </LayerGroup>
+    );
+  }
+
   return null;
 };
 
