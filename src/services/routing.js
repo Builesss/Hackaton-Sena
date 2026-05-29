@@ -90,28 +90,37 @@ const scoreRoute = (coords, trafficZones, accidentZones, rainZones) => {
   return { safetyScore, trafficPenalty: Math.round(normalize(trafficPenalty)), accidentPenalty: Math.round(normalize(accidentPenalty)), rainPenalty: Math.round(normalize(rainPenalty)), hazards };
 };
 
-// ─── Main Route Compute Function ──────────────────────────────────
+// ─── Main Route Compute Function (TomTom + AI Safety Scoring) ─────
 export const computeRoutes = async (origin, destination, trafficData, accidentsData, weatherData) => {
-  const url = `${OSRM_BASE}/${origin.lng},${origin.lat};${destination.lng},${destination.lat}?alternatives=3&geometries=polyline&overview=full&steps=false`;
+  const tomtomKey = import.meta.env.VITE_TOMTOM_API_KEY;
+  if (!tomtomKey) throw new Error("API Key de TomTom no configurada");
+
+  // Usamos la API de TomTom calculando ruta con consideraciones de tráfico en tiempo real
+  const url = `https://api.tomtom.com/routing/1/calculateRoute/${origin.lat},${origin.lng}:${destination.lat},${destination.lng}/json?key=${tomtomKey}&traffic=true&maxAlternatives=2`;
 
   const response = await fetch(url);
-  if (!response.ok) throw new Error('No se pudo obtener la ruta de OSRM');
+  if (!response.ok) throw new Error('No se pudo obtener la ruta desde TomTom');
   const json = await response.json();
 
   if (!json.routes || json.routes.length === 0) throw new Error('No se encontraron rutas');
 
   const trafficZones = trafficData?.zonas || [];
   const accidentZones = accidentsData?.zonasCriticas || [];
-  const rainZones = weatherData?.estaciones || [];
+  const rainZones = weatherData?.zonasRiesgo || []; // Using the dynamic weather risk zones
 
   const scored = json.routes.map((route, index) => {
-    const coords = decodePolyline(route.geometry);
+    // TomTom returns coordinates directly under legs[0].points
+    const points = route.legs[0].points;
+    const coords = points.map(p => [p.latitude, p.longitude]);
+    
+    const summary = route.summary;
     const scoring = scoreRoute(coords, trafficZones, accidentZones, rainZones);
+    
     return {
       index,
       coords,
-      distance: route.distance, // meters
-      duration: route.duration, // seconds
+      distance: summary.lengthInMeters, // meters
+      duration: summary.travelTimeInSeconds, // seconds
       ...scoring,
     };
   });

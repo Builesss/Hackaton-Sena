@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { trafficIcon } from '../../utils/mapIcons';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement,
@@ -133,28 +134,31 @@ const Trafico = () => {
               {liveZones?.map((z) => {
                 const level = getCongestionLevel(z.congestion);
                 return (
-                  <CircleMarker
+                  <Marker
                     key={z.id}
-                    center={[z.lat, z.lng]}
-                    radius={12 + z.congestion / 10}
-                    fillColor={level.color}
-                    color={level.color}
-                    weight={2}
-                    opacity={0.9}
-                    fillOpacity={0.55}
+                    position={[z.lat, z.lng]}
+                    icon={trafficIcon(z)}
                   >
                     <Popup>
-                      <div style={{ minWidth: 160 }}>
-                        <strong>{z.nombre}</strong><br />
-                        <span>🚦 Congestión: <strong style={{ color: level.color }}>{z.congestion}%</strong></span><br />
-                        <span>🚗 Velocidad: {z.velocidad} km/h</span><br />
-                        <span>🔢 Flujo: {formatNumber(z.flujo)} veh/h</span><br />
-                        <span className="badge" style={{ marginTop: 4, background: level.bg, color: level.color }}>
-                          {level.label}
-                        </span>
+                      <div style={{ minWidth: 175 }}>
+                        <strong style={{ fontSize: 13 }}>{z.nombre}</strong><br />
+                        <div style={{ margin: '6px 0 4px', display:'flex', gap: 8, alignItems:'center' }}>
+                          <span style={{
+                            background: level.color,
+                            color: '#fff',
+                            borderRadius: 6,
+                            padding: '2px 8px',
+                            fontSize: 11,
+                            fontWeight: 700
+                          }}>{level.label}</span>
+                          <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Congestión: <strong style={{ color: level.color }}>{z.congestion}%</strong></span>
+                        </div>
+                        <span style={{ fontSize: 12 }}>🚗 Velocidad: <strong>{z.velocidad} km/h</strong></span><br />
+                        <span style={{ fontSize: 12 }}>🔢 Flujo: {formatNumber(z.flujo)} veh/h</span>
+                        {z.live && <div style={{ fontSize: 10, color: '#00DCB4', marginTop: 4, fontWeight: 600 }}>✦ Dato en tiempo real (TomTom)</div>}
                       </div>
                     </Popup>
-                  </CircleMarker>
+                  </Marker>
                 );
               })}
             </MapContainer>
@@ -164,7 +168,7 @@ const Trafico = () => {
             <span><span style={{ color: 'var(--warning)' }}>●</span> Alto</span>
             <span><span style={{ color: 'var(--yellow)' }}>●</span> Moderado</span>
             <span><span style={{ color: 'var(--success)' }}>●</span> Normal</span>
-            <span style={{ color: 'var(--text-muted)' }}>Tamaño ∝ congestión</span>
+            <span style={{ color: 'var(--text-muted)' }}>Pulso animado = Congestión alta</span>
           </div>
         </div>
 

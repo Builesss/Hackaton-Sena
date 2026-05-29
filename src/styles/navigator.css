@@ -244,11 +244,11 @@
   background: #e8eef4 !important;
 }
 
-/* ── Layer toggle panel (floating bottom-left) ───────────────── */
+/* ── Layer toggle panel (floating top-right) ───────────────── */
 .nav-layers-panel {
   position: absolute;
-  bottom: 140px;
-  left: 16px;
+  top: 110px;
+  right: 16px;
   z-index: 500;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(16px);
@@ -292,6 +292,7 @@
 .nav-toggle-switch.on { background: var(--primary); }
 .nav-toggle-switch.on.green { background: var(--secondary); }
 .nav-toggle-switch.on.orange { background: var(--warning); }
+.nav-toggle-switch.on.info { background: #00D2D3; }
 
 .nav-toggle-switch::after {
   content: '';
@@ -488,6 +489,7 @@
     align-items: stretch;
     padding: 12px;
     gap: 10px;
+    border-radius: 0 0 16px 16px;
   }
 
   .nav-logo-pill {
@@ -516,19 +518,21 @@
   }
 
   .nav-map-wrap {
-    margin-top: 165px;
+    margin-top: 175px;
   }
 
-  /* Adjust the bottom panels so they don't overlap or look cramped */
+  /* Move layers panel to top right to avoid colliding with bottom strip */
   .nav-layers-panel {
-    bottom: 235px; /* Push up above the route strip */
-    left: 10px;
+    top: 185px;
+    bottom: auto;
+    left: auto;
     right: 10px;
     min-width: 0;
-    padding: 10px 14px;
+    padding: 10px 12px;
     display: flex;
-    justify-content: space-around;
-    gap: 10px;
+    flex-direction: column;
+    gap: 12px;
+    border-radius: 12px;
   }
 
   .nav-layers-title {
@@ -539,62 +543,121 @@
     margin-bottom: 0;
   }
 
+  /* Map hint below topbar */
+  .nav-map-select-hint {
+    top: 190px;
+    font-size: 11px;
+    white-space: normal;
+    text-align: center;
+    width: 80%;
+  }
+
+  /* Make bottom strip scrollable and adapt to screen */
   .nav-route-strip {
     left: 10px;
     right: 10px;
     bottom: 10px;
-    padding: 12px;
-    border-radius: 12px;
+    padding: 14px;
+    border-radius: 16px;
+    max-height: 45vh;
+    overflow-y: auto;
   }
 
   .nav-strip-header {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
 
   .nav-strip-title {
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .nav-score-badge {
     font-size: 11px;
-    padding: 2px 8px;
+    padding: 4px 8px;
   }
 
   .nav-strip-stats {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
 
   .nav-stat-item {
-    align-items: center;
+    align-items: flex-start;
   }
 
   .nav-stat-label {
-    font-size: 8px;
+    font-size: 9px;
   }
 
   .nav-stat-value {
-    font-size: 13px;
+    font-size: 15px;
   }
 
   .nav-hazards {
-    margin-top: 8px;
-    gap: 4px;
+    margin-top: 10px;
+    gap: 6px;
   }
 
   .nav-hazard-chip {
-    padding: 2px 6px;
-    font-size: 9px;
+    padding: 4px 8px;
+    font-size: 10px;
   }
 
   .nav-alt-routes {
-    margin-top: 8px;
-    gap: 4px;
+    margin-top: 12px;
+    flex-direction: column;
+    gap: 6px;
   }
 
   .nav-alt-btn {
-    padding: 4px 6px;
-    font-size: 9px;
+    padding: 8px 10px;
+    font-size: 11px;
   }
+}
+
+/* ── Premium Leaflet Popup Overrides ────────────────────────── */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.08) !important;
+  border: 1px solid rgba(45,52,64,0.08) !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.leaflet-popup-content {
+  margin: 12px 14px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+  color: #1e2430 !important;
+}
+
+.leaflet-popup-tip-container {
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08));
+}
+
+/* Premium marker tooltips */
+.leaflet-tooltip {
+  background: rgba(21, 26, 36, 0.95) !important;
+  color: #F5F7FA !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  border-radius: 8px !important;
+  padding: 4px 10px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2) !important;
+  white-space: nowrap;
+}
+
+.leaflet-tooltip::before {
+  border-top-color: rgba(21,26,36,0.95) !important;
+}
+
+/* ── Custom marker pulse keyframes ──────────────────────────── */
+@keyframes markerPing {
+  0%   { transform: scale(1); opacity: 0.8; }
+  70%  { transform: scale(2.5); opacity: 0; }
+  100% { transform: scale(2.5); opacity: 0; }
 }

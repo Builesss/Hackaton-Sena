@@ -9,7 +9,7 @@ export const signIn = async (email, password) => {
 
 // ─── Sign Up ─────────────────────────────────────────────────
 export const signUp = async (email, password, name) => {
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  const { data, error } = await supabase.auth.signUp({ email, password, name });
   if (error) throw error;
 
   // Insert profile with default role 'user'

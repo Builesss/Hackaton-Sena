@@ -1,0 +1,246 @@
+{
+  "cameras": [
+    {
+      "id": "FM-001",
+      "nombre": "Autopista Norte Km 6 (Bello)",
+      "lat": 6.3352,
+      "lng": -75.5673,
+      "tipo": "Fotodetección Velocidad 80km/h",
+      "limite": 80,
+      "activa": true,
+      "zona": "Norte"
+    },
+    {
+      "id": "FM-002",
+      "nombre": "Av. Regional - Puente Guayaquil",
+      "lat": 6.2465,
+      "lng": -75.5795,
+      "tipo": "Fotodetección Pico y Placa / SOAT",
+      "limite": 60,
+      "activa": true,
+      "zona": "Centro"
+    },
+    {
+      "id": "FM-003",
+      "nombre": "Av. El Poblado con Calle 10",
+      "lat": 6.2093,
+      "lng": -75.5742,
+      "tipo": "Fotodetección Velocidad 60km/h",
+      "limite": 60,
+      "activa": true,
+      "zona": "Sur"
+    },
+    {
+      "id": "FM-004",
+      "nombre": "Calle 30 con Av. Guayabal",
+      "lat": 6.2341,
+      "lng": -75.5876,
+      "tipo": "Control Semáforo en Rojo",
+      "limite": 50,
+      "activa": true,
+      "zona": "Centro"
+    },
+    {
+      "id": "FM-005",
+      "nombre": "Autopista Sur - Ditaires",
+      "lat": 6.1887,
+      "lng": -75.5770,
+      "tipo": "Fotodetección Velocidad 80km/h",
+      "limite": 80,
+      "activa": true,
+      "zona": "Sur"
+    },
+    {
+      "id": "FM-006",
+      "nombre": "Av. Las Vegas con Calle 34",
+      "lat": 6.2045,
+      "lng": -75.5705,
+      "tipo": "Fotodetección Velocidad 60km/h",
+      "limite": 60,
+      "activa": true,
+      "zona": "Sur"
+    },
+    {
+      "id": "FM-007",
+      "nombre": "Carrera 80 con San Juan",
+      "lat": 6.2481,
+      "lng": -75.5930,
+      "tipo": "Fotodetección Pico y Placa",
+      "limite": 50,
+      "activa": true,
+      "zona": "Centro-Occidente"
+    },
+    {
+      "id": "FM-008",
+      "nombre": "Circular 76 con Av. Jardín",
+      "lat": 6.2624,
+      "lng": -75.5954,
+      "tipo": "Control Semáforo en Rojo",
+      "limite": 50,
+      "activa": true,
+      "zona": "Laureles"
+    },
+    {
+      "id": "FM-009",
+      "nombre": "Av. 33 con Carrera 65",
+      "lat": 6.2382,
+      "lng": -75.5903,
+      "tipo": "Fotodetección Velocidad 50km/h",
+      "limite": 50,
+      "activa": true,
+      "zona": "Centro-Occidente"
+    },
+    {
+      "id": "FM-010",
+      "nombre": "Autopista Medellín-Bogotá entrada",
+      "lat": 6.2765,
+      "lng": -75.5523,
+      "tipo": "Fotodetección Velocidad 100km/h",
+      "limite": 100,
+      "activa": true,
+      "zona": "Oriente"
+    },
+    {
+      "id": "FM-011",
+      "nombre": "Av. Regional a la altura del Sena",
+      "lat": 6.2534,
+      "lng": -75.5783,
+      "tipo": "Fotodetección Pico y Placa / SOAT",
+      "limite": 60,
+      "activa": true,
+      "zona": "Norte-Centro"
+    },
+    {
+      "id": "FM-012",
+      "nombre": "Calle Colombia con Av. Regional",
+      "lat": 6.2308,
+      "lng": -75.5770,
+      "tipo": "Control Semáforo en Rojo",
+      "limite": 50,
+      "activa": true,
+      "zona": "Centro"
+    },
+    {
+      "id": "FM-013",
+      "nombre": "Poblado - Av. El Poblado con 2 Sur",
+      "lat": 6.2087,
+      "lng": -75.5720,
+      "tipo": "Fotodetección Velocidad 50km/h",
+      "limite": 50,
+      "activa": true,
+      "zona": "El Poblado"
+    },
+    {
+      "id": "FM-014",
+      "nombre": "Av. Guayabal con Calle 19",
+      "lat": 6.2263,
+      "lng": -75.5895,
+      "tipo": "Fotodetección Pico y Placa",
+      "limite": 60,
+      "activa": true,
+      "zona": "Guayabal"
+    },
+    {
+      "id": "FM-015",
+      "nombre": "Autopista Norte - Entrada Copacabana",
+      "lat": 6.3469,
+      "lng": -75.5618,
+      "tipo": "Fotodetección Velocidad 80km/h",
+      "limite": 80,
+      "activa": true,
+      "zona": "Norte"
+    },
+    {
+      "id": "FM-016",
+      "nombre": "Cra 45 - Av. Oriental con Palacé",
+      "lat": 6.2502,
+      "lng": -75.5692,
+      "tipo": "Control Semáforo en Rojo",
+      "limite": 50,
+      "activa": false,
+      "zona": "Centro"
+    },
+    {
+      "id": "FM-017",
+      "nombre": "Aguacatala - Av. El Poblado sur",
+      "lat": 6.1972,
+      "lng": -75.5669,
+      "tipo": "Fotodetección Velocidad 60km/h",
+      "limite": 60,
+      "activa": true,
+      "zona": "Sur"
+    },
+    {
+      "id": "FM-018",
+      "nombre": "Carrera 52 - Parque Berrío",
+      "lat": 6.2516,
+      "lng": -75.5691,
+      "tipo": "Fotodetección SOAT / Revisión Técnica",
+      "limite": 30,
+      "activa": true,
+      "zona": "Centro"
+    },
+    {
+      "id": "FM-019",
+      "nombre": "Av. 33 a la altura de Estadio",
+      "lat": 6.2432,
+      "lng": -75.5841,
+      "tipo": "Fotodetección Pico y Placa",
+      "limite": 50,
+      "activa": true,
+      "zona": "Estadio"
+    },
+    {
+      "id": "FM-020",
+      "nombre": "Variante Las Palmas Km 3",
+      "lat": 6.2186,
+      "lng": -75.5448,
+      "tipo": "Fotodetección Velocidad 80km/h",
+      "limite": 80,
+      "activa": true,
+      "zona": "Las Palmas"
+    }
+  ],
+  "puntos_metro": [
+    {
+      "id": "METRO-POBLADO",
+      "nombre": "Estación Metro Poblado",
+      "lat": 6.2087,
+      "lng": -75.5720,
+      "tipo": "Estación Metro Línea A",
+      "es_metro": true
+    },
+    {
+      "id": "METRO-AGUACATALA",
+      "nombre": "Estación Metro Aguacatala",
+      "lat": 6.1972,
+      "lng": -75.5669,
+      "tipo": "Estación Metro Línea A",
+      "es_metro": true
+    },
+    {
+      "id": "METROCABLE-SD",
+      "nombre": "MetroCable Santo Domingo",
+      "lat": 6.2962,
+      "lng": -75.5463,
+      "tipo": "Estación MetroCable Línea K",
+      "es_metro": true
+    },
+    {
+      "id": "METROCABLE-ARVI",
+      "nombre": "Estación Arví MetroCable",
+      "lat": 6.2955,
+      "lng": -75.4985,
+      "tipo": "Estación MetroCable Línea L",
+      "es_metro": true
+    },
+    {
+      "id": "METRO-13NOV",
+      "nombre": "Estación 13 de Noviembre",
+      "lat": 6.2378,
+      "lng": -75.5435,
+      "tipo": "Estación MetroCable Línea J",
+      "es_metro": true
+    }
+  ]
+}

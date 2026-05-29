@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-05-29T10:00:00Z",
+  "promedioCiudad": {
+    "pm25": 45,
+    "estado": "Moderado",
+    "color": "#FF9500"
+  },
+  "estaciones": [
+    {
+      "id": "EST-01",
+      "nombre": "Centro - Museo de Antioquia",
+      "pm25": 65,
+      "estado": "Dañino para Grupos Sensibles",
+      "color": "#FF4757"
+    },
+    {
+      "id": "EST-02",
+      "nombre": "Poblado - INEM",
+      "pm25": 40,
+      "estado": "Moderado",
+      "color": "#FF9500"
+    },
+    {
+      "id": "EST-03",
+      "nombre": "Bello",
+      "pm25": 72,
+      "estado": "Dañino para Grupos Sensibles",
+      "color": "#FF4757"
+    },
+    {
+      "id": "EST-04",
+      "nombre": "Envigado - Las Vegas",
+      "pm25": 22,
+      "estado": "Bueno",
+      "color": "#2ED573"
+    }
+  ]
+}

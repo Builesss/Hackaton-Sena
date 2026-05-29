@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Popup, Polygon } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polygon } from 'react-leaflet';
+import { rainZoneIcon } from '../../utils/mapIcons';
 import { Line, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement,
@@ -166,30 +167,30 @@ const RutasLluvias = () => {
                 />
               )}
               {zonasRiesgo.map((z, i) => (
-                <CircleMarker
+                <Marker
                   key={i}
-                  center={[z.lat, z.lng]}
-                  radius={z.nivel === 'crítico' ? 22 : z.nivel === 'alto' ? 16 : 12}
-                  fillColor={
-                    z.nivel === 'crítico' ? '#FF4757' :
-                    z.nivel === 'alto' ? '#FF9500' : '#FFD32A'
-                  }
-                  color={z.activo ? '#FF4757' : '#4A5568'}
-                  weight={2}
-                  opacity={0.9}
-                  fillOpacity={z.activo ? 0.55 : 0.25}
+                  position={[z.lat, z.lng]}
+                  icon={rainZoneIcon(z)}
                 >
                   <Popup>
-                    <div style={{ minWidth: 160 }}>
-                      <strong>{z.zona}</strong><br />
-                      <span>⚠️ Riesgo: {z.riesgo}</span><br />
-                      <span>Nivel: <strong style={{
-                        color: z.nivel === 'crítico' ? '#FF4757' : z.nivel === 'alto' ? '#FF9500' : '#FFD32A'
-                      }}>{z.nivel.toUpperCase()}</strong></span><br />
-                      <span>Estado: {z.activo ? '🔴 ACTIVO' : '⚪ Inactivo'}</span>
+                    <div style={{ minWidth: 180 }}>
+                      <strong style={{ fontSize: 13 }}>{z.zona}</strong><br />
+                      <div style={{ margin: '6px 0 4px', display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <span style={{
+                          background: z.nivel === 'crítico' ? '#FF4757' : z.nivel === 'alto' ? '#FF9500' : '#FFD32A',
+                          color: z.nivel === 'medio' ? '#1a1a2e' : '#fff',
+                          borderRadius: 6, padding: '2px 8px',
+                          fontSize: 11, fontWeight: 700
+                        }}>{z.nivel.toUpperCase()}</span>
+                        <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Índice: <strong>{z.riesgo}</strong></span>
+                      </div>
+                      <span style={{ fontSize: 12 }}>Tipo: {z.tipo || 'Riesgo climático'}</span><br />
+                      <span style={{ fontSize: 12, fontWeight: 600,
+                        color: z.activo ? '#FF4757' : '#b2bec3'
+                      }}>{z.activo ? '🔴 ZONA ACTIVA' : '⚪ Inactiva'}</span>
                     </div>
                   </Popup>
-                </CircleMarker>
+                </Marker>
               ))}
             </MapContainer>
           </div>

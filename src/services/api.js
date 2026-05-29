@@ -133,3 +133,44 @@ export const getLiveWeather = async () => {
   delete cache[API_ENDPOINTS.weather];
   return fetchData(API_ENDPOINTS.weather);
 };
+
+export const getCamerasData = () => fetchData(API_ENDPOINTS.cameras);
+export const getAirQualityData = async () => {
+  const data = await fetchData(API_ENDPOINTS.airQuality);
+  if (Array.isArray(data)) {
+    let sum = 0;
+    let count = 0;
+    const stations = [];
+    
+    data.forEach(station => {
+      if (station.datos && station.datos.length > 0) {
+        // Encontrar el último valor válido (diferente a -9999)
+        const validData = station.datos.filter(d => d.valor !== -9999);
+        if (validData.length > 0) {
+          const last = validData[validData.length - 1];
+          sum += last.valor;
+          count++;
+          stations.push({
+            lat: station.latitud,
+            lng: station.longitud || station.latitud, // Fallback if missing
+            valor: last.valor,
+            calidad: last.calidad,
+            nombre: `Estación ${station.codigoSerial}`
+          });
+        }
+      }
+    });
+    
+    const avg = count > 0 ? Math.round(sum / count) : 0;
+    let estado = 'Bueno';
+    if (avg > 55) estado = 'Dañino';
+    else if (avg > 35) estado = 'Malo';
+    else if (avg > 12) estado = 'Moderado';
+    
+    return {
+      promedioCiudad: { pm25: avg, estado },
+      estaciones: stations
+    };
+  }
+  return data;
+};

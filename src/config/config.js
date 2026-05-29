@@ -24,6 +24,8 @@ export const API_ENDPOINTS = {
   accidents: '/data/accidents.json',
   traffic: '/data/traffic.json',
   weather: '/data/weather.json',
+  cameras: '/data/cameras.json',
+  airQuality: '/data/Datos_SIATA_Aire_pm25.json',
   // Real endpoints (reference):
   observatorioMovilidad: 'https://www.medellin.gov.co/es/secretaria-de-movilidad/observatorio-de-movilidad/',
   sim: 'https://www.medellin.gov.co/es/secretaria-de-movilidad/sistema-inteligente-de-movilidad-de-medellin/',

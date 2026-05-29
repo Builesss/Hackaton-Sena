@@ -11,64 +11,7 @@ import { addNoise } from '../../utils/helpers';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Tooltip, Legend, Filler, Title);
 
-const fetchOpenRouterPrediction = async (historico) => {
-  const models = [
-    'openrouter/free',
-    'meta-llama/llama-3.3-70b-instruct:free',
-    'google/gemma-3-12b-it:free',
-    'google/gemini-2.0-flash-lite-preview-02-05:free',
-    'meta-llama/llama-3.1-8b-instruct:free',
-    'mistralai/mistral-7b-instruct:free',
-    'qwen/qwen-2-7b-instruct:free',
-    'microsoft/phi-3-mini-128k-instruct:free',
-    'openchat/openchat-7b:free',
-    'huggingfaceh4/zephyr-7b-beta:free',
-    'undi95/toppy-m-7b:free',
-    'gryphe/mythomax-l2-13b:free',
-    'openrouter/auto'
-  ];
-
-  const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
-  if (!apiKey) throw new Error("API Key de OpenRouter no encontrada");
-
-  const prompt = `Actúa como un experto en análisis de tráfico urbano. Dado el siguiente historial de nivel de congestión (0-100) en las últimas 8 horas: ${historico.join(', ')}. Predice el nivel de congestión para las próximas 8 horas. Responde ÚNICAMENTE con un array de 8 números enteros separados por comas, sin texto adicional, sin formato markdown. Ejemplo: 45, 50, 55, 60, 65, 70, 75, 80.`;
-
-  for (const model of models) {
-    try {
-      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'HTTP-Referer': window.location.origin,
-          'X-Title': 'Previmed Traffic Predictor',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: model,
-          messages: [{ role: 'user', content: prompt }],
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error en modelo ${model}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      const content = data.choices[0].message.content;
-      
-      const nums = content.split(',').map(n => parseInt(n.trim(), 10)).filter(n => !isNaN(n));
-      if (nums.length >= 8) {
-        return { prediction: nums.slice(0, 8), modelUsed: model };
-      } else {
-        throw new Error(`Formato incorrecto del modelo ${model}: ${content}`);
-      }
-    } catch (error) {
-      console.warn(`Falló el modelo ${model}, intentando con el siguiente...`, error);
-    }
-  }
-
-  throw new Error("Todos los modelos de IA fallaron.");
-};
+import { fetchOpenRouterPrediction } from '../../services/ai';
 
 const Prediccion = () => {
   const [data, setData] = useState(null);

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Popup, LayerGroup } from 'react-leaflet';
+import { MapContainer, TileLayer, Popup, LayerGroup, useMap } from 'react-leaflet';
+import L from 'leaflet';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS, CategoryScale, LinearScale, BarElement,
@@ -11,6 +12,26 @@ import { MAP_CONFIG, CHART_DEFAULTS, COLORS } from '../../config/config';
 import StatCard from '../../components/Cards/StatCard';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend, Title);
+
+const HeatmapLayer = ({ data }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (!data || data.length === 0 || !L.heatLayer) return;
+    const points = data.map(p => [
+      p.lat, 
+      p.lng, 
+      p.gravedad === 'fatal' ? 1.0 : p.gravedad === 'grave' ? 0.7 : 0.4
+    ]);
+    const heatLayer = L.heatLayer(points, {
+      radius: 25,
+      blur: 20,
+      maxZoom: 16,
+      gradient: { 0.4: 'yellow', 0.7: 'orange', 1: 'red' }
+    }).addTo(map);
+    return () => { map.removeLayer(heatLayer); };
+  }, [data, map]);
+  return null;
+};
 
 const Accidentalidad = () => {
   const [data, setData] = useState(null);
@@ -165,41 +186,14 @@ const Accidentalidad = () => {
                     tileSize={256}
                   />
                 )}
-                <LayerGroup>
-                  {filtered.map((incident) => (
-                    <CircleMarker
-                      key={incident.id}
-                      center={[incident.lat, incident.lng]}
-                      radius={incident.gravedad === 'fatal' ? 14 : incident.gravedad === 'grave' ? 10 : 7}
-                      fillColor={getMarkerColor(incident.gravedad)}
-                      color={getMarkerColor(incident.gravedad)}
-                      weight={2}
-                      opacity={0.9}
-                      fillOpacity={0.6}
-                    >
-                      <Popup>
-                        <div style={{ minWidth: 160 }}>
-                          <strong style={{ color: getMarkerColor(incident.gravedad) }}>
-                            {incident.tipo} — {incident.gravedad.toUpperCase()}
-                          </strong>
-                          <br />
-                          <span>📍 {incident.zona}</span><br />
-                          <span>📅 {incident.fecha} · {incident.hora}</span><br />
-                          <span>🤕 Víctimas: {incident.victimas}</span><br />
-                          {incident.lluvia && <span>🌧️ Con lluvia activa</span>}
-                        </div>
-                      </Popup>
-                    </CircleMarker>
-                  ))}
-                </LayerGroup>
+                <HeatmapLayer data={filtered} />
               </MapContainer>
             </div>
           )}
           <div style={{ marginTop: 12, display: 'flex', gap: 16, fontSize: 12 }}>
-            <span><span style={{ color: '#FF4757' }}>●</span> Fatal</span>
-            <span><span style={{ color: '#FF9500' }}>●</span> Grave</span>
-            <span><span style={{ color: '#FFD32A' }}>●</span> Leve</span>
-            <span style={{ color: 'var(--text-muted)' }}>Radio = gravedad del incidente</span>
+            <span><span style={{ color: 'red' }}>●</span> Alta densidad (Fatal/Grave)</span>
+            <span><span style={{ color: 'orange' }}>●</span> Densidad Media</span>
+            <span><span style={{ color: 'yellow' }}>●</span> Densidad Baja (Leve)</span>
           </div>
         </div>
 

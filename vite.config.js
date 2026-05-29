@@ -11,6 +11,7 @@ export default defineConfig({
       '/tomtom': {
         target: 'https://api.tomtom.com',
         changeOrigin: true,
+        secure: false,
         rewrite: (path) => path.replace(/^\/tomtom/, ''),
       },
     },

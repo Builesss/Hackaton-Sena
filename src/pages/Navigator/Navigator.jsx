@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
-  MapContainer, TileLayer, CircleMarker, Popup,
+  MapContainer, TileLayer, Popup,
   Polyline, Marker, useMapEvents, useMap,
 } from 'react-leaflet';
 import L from 'leaflet';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { signOut } from '../../services/auth';
-import { getTrafficData, getAccidentsData, getWeatherData } from '../../services/api';
+import { getTrafficData, getAccidentsData, getWeatherData, getCamerasData, getAirQualityData } from '../../services/api';
 import { computeRoutes, reverseGeocode, geocodeAddress } from '../../services/routing';
 import { getCongestionLevel, getRiskLevel, getMarkerColor } from '../../utils/helpers';
+import { accidentIcon, cameraIcon, metroIcon, airQualityIcon, rainZoneIcon } from '../../utils/mapIcons';
 import '../../styles/navigator.css';
 import 'leaflet/dist/leaflet.css';
 
@@ -40,32 +41,6 @@ const makeIcon = (color, label) => L.divIcon({
 
 const originIcon = makeIcon('#0066FF', '📍');
 const destIcon   = makeIcon('#00DCB4', '🎯');
-
-// ─── Cloud icon factory for rain zones ─────────────────────────
-const makeCloudIcon = (nivel, activo) => {
-  const color = nivel === 'crítico' ? '#FF4757' : nivel === 'alto' ? '#FF9500' : '#64B5F6';
-  const glow  = activo ? `drop-shadow(0 0 8px ${color})` : 'none';
-  const anim  = activo ? 'cloud-float 3s ease-in-out infinite' : 'none';
-  return L.divIcon({
-    className: '',
-    html: `<div style="animation:${anim};filter:${glow};">
-      <svg width="64" height="44" viewBox="0 0 64 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <ellipse cx="32" cy="28" rx="26" ry="16" fill="${color}" opacity="0.85"/>
-        <ellipse cx="22" cy="24" rx="14" ry="12" fill="${color}" opacity="0.9"/>
-        <ellipse cx="40" cy="25" rx="12" ry="10" fill="${color}" opacity="0.9"/>
-        <ellipse cx="32" cy="20" rx="16" ry="13" fill="${color}"/>
-        ${activo ? `
-        <line x1="22" y1="38" x2="19" y2="46" stroke="${color}" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
-        <line x1="30" y1="40" x2="27" y2="50" stroke="${color}" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
-        <line x1="38" y1="38" x2="35" y2="48" stroke="${color}" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
-        ` : ''}
-      </svg>
-    </div>`,
-    iconSize:    [64, 56],
-    iconAnchor:  [32, 44],
-    popupAnchor: [0, -48],
-  });
-};
 
 // ─── Map click handler component ───────────────────────────────
 const MapClickHandler = ({ selectMode, onMapClick }) => {
@@ -103,6 +78,8 @@ const Navigator = () => {
   const [trafficData,   setTrafficData]   = useState(null);
   const [accidentsData, setAccidentsData] = useState(null);
   const [weatherData,   setWeatherData]   = useState(null);
+  const [camerasData,   setCamerasData]   = useState(null);
+  const [airData,       setAirData]       = useState(null);
 
   // ── Location state ────────────────────────────────────────────
   const [origin, setOrigin]   = useState(null); // { lat, lng, label }
@@ -129,6 +106,8 @@ const Navigator = () => {
   const [showTraffic,   setShowTraffic]   = useState(true);
   const [showAccidents, setShowAccidents] = useState(true);
   const [showRain,      setShowRain]      = useState(true);
+  const [showCameras,   setShowCameras]   = useState(true);
+  const [showAir,       setShowAir]       = useState(false);
 
   // ── Fly-to point ──────────────────────────────────────────────
   const [flyTarget, setFlyTarget] = useState(null);
@@ -138,6 +117,8 @@ const Navigator = () => {
     getTrafficData().then(setTrafficData).catch(console.warn);
     getAccidentsData().then(setAccidentsData).catch(console.warn);
     getWeatherData().then(setWeatherData).catch(console.warn);
+    getCamerasData().then(setCamerasData).catch(console.warn);
+    getAirQualityData().then(setAirData).catch(console.warn);
   }, []);
 
   // ── Geolocation ───────────────────────────────────────────────
@@ -378,48 +359,134 @@ const Navigator = () => {
           {flyTarget && <FlyTo point={flyTarget} />}
 
 
-          {/* ── Accident Incidents ── */}
+          {/* ── Accident Incidents — Warning Triangle Icons ── */}
           {showAccidents && accidentsData?.incidents?.map((incident) => (
-            <CircleMarker
+            <Marker
               key={`inc-${incident.id}`}
-              center={[incident.lat, incident.lng]}
-              radius={incident.gravedad === 'fatal' ? 14 : incident.gravedad === 'grave' ? 10 : 7}
-              fillColor={getMarkerColor(incident.gravedad)}
-              color={getMarkerColor(incident.gravedad)}
-              weight={2}
-              opacity={0.9}
-              fillOpacity={0.6}
+              position={[incident.lat, incident.lng]}
+              icon={accidentIcon(incident.gravedad)}
+            >
+              <Popup>
+                <div style={{ minWidth: 180 }}>
+                  <strong style={{ color: getMarkerColor(incident.gravedad), fontSize: 13 }}>
+                    {incident.tipo}
+                  </strong>
+                  <div style={{ margin: '5px 0 4px', display:'flex', gap:6 }}>
+                    <span style={{
+                      background: getMarkerColor(incident.gravedad),
+                      color: '#fff', borderRadius: 6,
+                      padding: '2px 8px', fontSize: 11, fontWeight: 700
+                    }}>{incident.gravedad.toUpperCase()}</span>
+                    {incident.lluvia && <span style={{ fontSize: 11, color: '#6C63FF' }}>🌧️ Lluvia</span>}
+                  </div>
+                  <span style={{ fontSize: 12 }}>📍 {incident.zona}</span><br />
+                  <span style={{ fontSize: 12 }}>📅 {incident.fecha} · {incident.hora}</span><br />
+                  <span style={{ fontSize: 12 }}>🤕 Víctimas: <strong>{incident.victimas}</strong></span>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+
+          {/* ── Cameras / Fotomultas — SVG Camera Icons ── */}
+          {showCameras && camerasData?.cameras?.map((cam) => (
+            <Marker
+              key={cam.id}
+              position={[cam.lat, cam.lng]}
+              icon={cameraIcon(cam.activa !== false)}
+            >
+              <Popup>
+                <div style={{ minWidth: 185 }}>
+                  <strong style={{ color: cam.activa !== false ? '#FF4757' : '#636e72' }}>
+                    📷 {cam.nombre}
+                  </strong><br />
+                  <span style={{ fontSize: 12 }}>{cam.tipo}</span><br />
+                  {cam.limite && <span style={{ fontSize: 12 }}>🚗 Límite: <strong>{cam.limite} km/h</strong></span>}
+                  {cam.limite && <br />}
+                  {cam.zona && <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>📍 {cam.zona}</span>}
+                  {cam.zona && <br />}
+                  <span style={{
+                    fontSize: 11,
+                    color: cam.activa !== false ? '#00DCB4' : '#b2bec3',
+                    fontWeight: 600
+                  }}>
+                    {cam.activa !== false ? '🟢 ACTIVA' : '⚫ Inactiva'}
+                  </span>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+
+          {/* ── Puntos Metro (from cameras.json) ── */}
+          {showCameras && camerasData?.puntos_metro?.map((pt) => (
+            <Marker
+              key={pt.id}
+              position={[pt.lat, pt.lng]}
+              icon={metroIcon}
             >
               <Popup>
                 <div style={{ minWidth: 160 }}>
-                  <strong style={{ color: getMarkerColor(incident.gravedad) }}>
-                    {incident.tipo} — {incident.gravedad.toUpperCase()}
-                  </strong>
-                  <br />
-                  <span>📍 {incident.zona}</span><br />
-                  <span>📅 {incident.fecha} · {incident.hora}</span><br />
-                  <span>🤕 Víctimas: {incident.victimas}</span><br />
-                  {incident.lluvia && <span>🌧️ Con lluvia activa</span>}
+                  <strong style={{ color: '#e74c3c' }}>🚇 {pt.nombre}</strong><br />
+                  <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{pt.tipo}</span>
                 </div>
               </Popup>
-            </CircleMarker>
+            </Marker>
           ))}
 
-          {/* ── Rain zones as animated cloud icons ── */}
+          {/* ── Air Quality Stations — Gauge Card Icons ── */}
+          {showAir && airData?.estaciones?.map((est, i) => (
+            <Marker
+              key={`aq-${i}`}
+              position={[est.lat, est.lng]}
+              icon={airQualityIcon(est)}
+            >
+              <Popup>
+                <div style={{ minWidth: 175 }}>
+                  <strong style={{ fontSize: 13 }}>💨 {est.nombre}</strong><br />
+                  <div style={{ margin: '5px 0 4px', display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <span style={{
+                      background: est.valor > 55 ? '#FF4757' : est.valor > 35 ? '#FF9500' : est.valor > 12 ? '#FFD32A' : '#00DCB4',
+                      color: est.valor <= 35 && est.valor > 12 ? '#1a1a2e' : '#fff',
+                      borderRadius: 6, padding: '2px 8px',
+                      fontSize: 11, fontWeight: 700
+                    }}>
+                      {est.valor > 55 ? 'MUY MALO' : est.valor > 35 ? 'MALO' : est.valor > 12 ? 'MODERADO' : 'BUENO'}
+                    </span>
+                  </div>
+                  <span style={{ fontSize: 12 }}>PM2.5: <strong>{est.valor} µg/m³</strong></span><br />
+                  <div style={{ marginTop: 6, width: '100%', height: 6, background: 'rgba(0,0,0,0.1)', borderRadius: 99 }}>
+                    <div style={{
+                      width: `${Math.min(100, (est.valor / 70) * 100)}%`,
+                      height: '100%',
+                      background: est.valor > 55 ? '#FF4757' : est.valor > 35 ? '#FF9500' : est.valor > 12 ? '#FFD32A' : '#00DCB4',
+                      borderRadius: 99
+                    }} />
+                  </div>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+
+          {/* ── Rain zones — Animated Water Drop Icons ── */}
           {showRain && weatherData?.zonasRiesgo?.map((z, i) => (
             <Marker
               key={`r-${i}`}
               position={[z.lat, z.lng]}
-              icon={makeCloudIcon(z.nivel, z.activo)}
+              icon={rainZoneIcon(z)}
             >
               <Popup>
-                <div style={{ minWidth: 160 }}>
-                  <strong>🌧️ {z.zona}</strong><br />
-                  <span>⚠️ Riesgo: {z.riesgo}</span><br />
-                  <span>Nivel: <strong style={{
-                    color: z.nivel === 'crítico' ? '#FF4757' : z.nivel === 'alto' ? '#FF9500' : '#FFD32A'
-                  }}>{z.nivel.toUpperCase()}</strong></span><br />
-                  <span>Estado: {z.activo ? '🔴 ACTIVO' : '⚪ Inactivo'}</span>
+                <div style={{ minWidth: 175 }}>
+                  <strong style={{ fontSize: 13 }}>🌧️ {z.zona}</strong><br />
+                  <div style={{ margin: '5px 0 4px', display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <span style={{
+                      background: z.nivel === 'crítico' ? '#FF4757' : z.nivel === 'alto' ? '#FF9500' : '#FFD32A',
+                      color: '#fff', borderRadius: 6,
+                      padding: '2px 8px', fontSize: 11, fontWeight: 700
+                    }}>{z.nivel.toUpperCase()}</span>
+                    <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Riesgo: <strong>{z.riesgo}</strong></span>
+                  </div>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: z.activo ? '#FF4757' : '#b2bec3' }}>
+                    {z.activo ? '🔴 ZONA ACTIVA' : '⚪ Inactiva'}
+                  </span>
                 </div>
               </Popup>
             </Marker>
@@ -480,6 +547,8 @@ const Navigator = () => {
             { key: 'traffic',   label: '🚦 Tráfico',     val: showTraffic,   set: setShowTraffic,   cls: '' },
             { key: 'accidents', label: '⚠️ Accidentes',  val: showAccidents, set: setShowAccidents, cls: '' },
             { key: 'rain',      label: '🌧️ Lluvia',      val: showRain,      set: setShowRain,      cls: 'orange' },
+            { key: 'cameras',   label: '📷 Radares',     val: showCameras,   set: setShowCameras,   cls: '' },
+            { key: 'air',       label: '💨 Aire',        val: showAir,       set: setShowAir,       cls: 'info' },
           ].map(({ key, label, val, set, cls }) => (
             <div key={key} className="nav-layer-toggle" onClick={() => set(v => !v)}>
               <div className={`nav-toggle-switch ${val ? `on ${cls}` : ''}`} />

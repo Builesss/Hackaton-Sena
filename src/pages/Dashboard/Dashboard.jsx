@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import StatCard from '../../components/Cards/StatCard';
-import { getAccidentsData, getTrafficData, getWeatherData } from '../../services/api';
+import { getAccidentsData, getTrafficData, getWeatherData, getAirQualityData } from '../../services/api';
+import { generateExecutiveReport } from '../../services/ai';
 import { getCongestionLevel, formatNumber } from '../../utils/helpers';
 
 const Dashboard = () => {
   const [accidents, setAccidents] = useState(null);
   const [traffic, setTraffic] = useState(null);
   const [weather, setWeather] = useState(null);
+  const [air, setAir] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
 
   useEffect(() => {
-    Promise.all([getAccidentsData(), getTrafficData(), getWeatherData()]).then(
-      ([a, t, w]) => { setAccidents(a); setTraffic(t); setWeather(w); setLoading(false); }
+    Promise.all([getAccidentsData(), getTrafficData(), getWeatherData(), getAirQualityData()]).then(
+      ([a, t, w, aq]) => { setAccidents(a); setTraffic(t); setWeather(w); setAir(aq); setLoading(false); }
     );
   }, []);
 
@@ -30,6 +33,42 @@ const Dashboard = () => {
   const totalAccidents = accidents?.porMes?.accidentes?.reduce((s, v) => s + v, 0) || 0;
   const activeAlerts = weather?.zonasRiesgo?.filter((z) => z.activo).length || 0;
 
+  const handleGeneratePdf = async () => {
+    setGeneratingPdf(true);
+    try {
+      const htmlContent = await generateExecutiveReport({ accidents, traffic, weather });
+      
+      const element = document.createElement('div');
+      element.innerHTML = `
+        <div style="font-family: sans-serif; padding: 40px; color: #1e293b;">
+          <div style="border-bottom: 2px solid #0066FF; padding-bottom: 20px; margin-bottom: 30px;">
+            <h1 style="color: #0066FF; margin: 0;">PREVIMED OS</h1>
+            <h3 style="margin: 5px 0 0 0; color: #64748b;">Reporte Ejecutivo de Situación Vial en Tiempo Real</h3>
+            <p style="margin: 5px 0 0 0; font-size: 12px; color: #94a3b8;">Generado por Inteligencia Artificial — ${new Date().toLocaleString()}</p>
+          </div>
+          <div style="line-height: 1.6; font-size: 14px;">
+            ${htmlContent}
+          </div>
+        </div>
+      `;
+      
+      const opt = {
+        margin:       10,
+        filename:     'Reporte_Movilidad_PREVIMED.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      
+      window.html2pdf().set(opt).from(element).save();
+    } catch (e) {
+      console.error("Error generating PDF", e);
+      alert("Hubo un error generando el reporte. Asegúrate de tener conexión.");
+    } finally {
+      setGeneratingPdf(false);
+    }
+  };
+
   return (
     <div className="animate-in">
       {/* Page Header */}
@@ -39,8 +78,16 @@ const Dashboard = () => {
           <p>Vista unificada de movilidad urbana para Medellín en tiempo real</p>
         </div>
         <div className="page-header-actions">
+          <button 
+            className="btn btn-primary" 
+            onClick={handleGeneratePdf}
+            disabled={generatingPdf}
+            style={{ marginRight: '10px' }}
+          >
+            {generatingPdf ? '⏳ Generando IA...' : '📄 Generar Reporte PDF'}
+          </button>
           {weather?.actual?.alerta && (
-            <div className="alert-strip danger" style={{ padding: '8px 14px' }}>
+            <div className="alert-strip danger" style={{ padding: '8px 14px', marginRight: '10px' }}>
               <span>⛈️</span> Alerta Climática Activa
             </div>
           )}
@@ -52,7 +99,7 @@ const Dashboard = () => {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid-4" style={{ marginBottom: 24 }}>
+      <div className="grid-5" style={{ marginBottom: 24 }}>
         <StatCard
           icon="⚠️"
           value={formatNumber(totalAccidents)}
@@ -88,6 +135,15 @@ const Dashboard = () => {
           deltaType={activeAlerts > 2 ? 'up' : 'neutral'}
           color="#0066FF"
           bgColor="rgba(0,102,255,0.12)"
+        />
+        <StatCard
+          icon="💨"
+          value={`${air?.promedioCiudad?.pm25 || 0} ICA`}
+          label="Calidad del Aire (PM2.5)"
+          delta={air?.promedioCiudad?.estado || 'Bueno'}
+          deltaType={air?.promedioCiudad?.pm25 > 50 ? 'down' : 'neutral'}
+          color="#00D2D3"
+          bgColor="rgba(0,210,211,0.12)"
         />
       </div>
 
